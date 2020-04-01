@@ -20,7 +20,7 @@ F4 - start playback, read from megaman.rec in the directory where the game execu
 
 --------------------------------------------------------
 
-] - To step one frame (this also reloads the input file so you can make changes to the inputs while framestepping.)<br/>
+[ - To step one frame (this also reloads the input file so you can make changes to the inputs while framestepping.)<br/>
 Note: It won't understep (e.g go backwards and redo) you can only edit a current input or inputs currently not being
       played back.
 
