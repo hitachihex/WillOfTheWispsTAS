@@ -38,6 +38,7 @@ Accepted commands are: <br />
     Bash <br />
     Grapple <br />
     AbilityWheel <br />
+    Pos <br /> - for setting oris position, in form of Pos, <x pos as float>, <y pos as float>
     Wheel <br />
     Glide <br />
     Grab <br />
