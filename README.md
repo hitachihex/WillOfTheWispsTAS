@@ -33,6 +33,8 @@ Commands read from input file are in the format of:
    frames, Action
    
 Accepted commands are: <br />
+    Runto - to be placed under a line you want to fast forward playback to, then the game will pause. <br />
+    Walkto - to be placed under a line you want to normal speed playback to, then the game will pause. <br />
     Left <br />
     Right <br />
     Up <br />
