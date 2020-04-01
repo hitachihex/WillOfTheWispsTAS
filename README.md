@@ -44,11 +44,11 @@ Accepted commands are: <br />
     Bash <br />
     Grapple <br />
     AbilityWheel <br />
-    Pos <br /> - for setting oris position, in form of Pos,xpos,ypos
+    Pos  - for setting oris position, in form of Pos,xpos,ypos <br /> 
     Wheel <br />
     Glide <br />
     Grab <br />
-    Angle <br /> - for setting an angle to aim your launch, bash, etc in degrees.
+    Angle - for setting an angle to aim your launch, bash, etc in degrees. <br /> 
     Start <br />
     Pause <br />
     Ability1 <br />
