@@ -3,6 +3,10 @@ TAS tools for WOTW.
 
 To use the tool, run WOTW.TAS.Injector.exe after running the game executable, make sure WOTW.TAS.dll is in the same directory as the injector executable. You will need to run the injector (and possibly the game) as administrator.
 
+Note: inject once you are in main menu, otherwise issues can arise with pointers being grabbed too early.
+(I can fix this but it wasn't priority atm)
+
+Run Buggy.exe to for overlay display of commands being executed, and to show Position\Speed\Cursor pos, etc.
 
 Hotkeys aren't configurable, input file is created for you if it does not exist.
 
