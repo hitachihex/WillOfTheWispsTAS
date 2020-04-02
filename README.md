@@ -18,7 +18,7 @@ Hotkeys are basic:
 
 F1 - to pause\start framestep.
 
-F4 - start playback, read from megaman.rec in the directory where the game executable is located.
+F4 - start playback, read from Ori.rec in the directory where the game executable is located.
 
 --------------------------------------------------------
 
