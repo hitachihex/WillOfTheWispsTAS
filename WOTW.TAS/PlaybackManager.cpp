@@ -427,20 +427,28 @@ void PlaybackManager::DoPlayback(bool wasFramestepped /* XINPUT_STATE*pxInpState
 		g_pCoreInput->VerticalAnalogLeft = m_pCurrentInput->YAxis;
 		g_pCoreInput->Vertical = m_pCurrentInput->YAxis;
 
+		// These do anything?
+		g_pCoreInput->HorizontalMenu = m_pCurrentInput->XAxis;
+		g_pCoreInput->VerticalMenu = m_pCurrentInput->YAxis;
+
 		g_pCoreInput->HorizontalAnalogRight = 0.0f;
 		g_pCoreInput->VerticalAnalogRight = 0.0f;
 		g_pCoreInput->HorizontalDigiPad = (int)m_pCurrentInput->XAxis;
 		g_pCoreInput->VerticalDigiPad = (int)m_pCurrentInput->YAxis;
 
-		/*
-		if (!m_pCurrentInput->HasPos)
+		// BF tas did !HasPos before this? :think:
+		if (m_pCurrentInput->HasMouse)
 		{
-			g_pCoreInput->CursorMoved=true;
-		}*/
-
-		// For now, let's see if it just lets us choose angles.
-		g_pCoreInput->CursorMoved = false;
-		GetGameSettingsInstance()->m_CurrentControlScheme = EControlScheme::Controller;
+			g_pCoreInput->CursorPosition.m_fX = m_pCurrentInput->MousePosX;
+			g_pCoreInput->CursorPosition.m_fY = m_pCurrentInput->MousePosY;
+			g_pCoreInput->CursorMoved = true;
+			GetGameSettingsInstance()->m_CurrentControlScheme = EControlScheme::KeyboardAndMouse;
+		}
+		else
+		{
+			g_pCoreInput->CursorMoved = false;
+			GetGameSettingsInstance()->m_CurrentControlScheme = EControlScheme::Controller;
+		}
 
 
 		g_pButtonA->Update(m_pCurrentInput->IsJump());
@@ -492,15 +500,6 @@ void PlaybackManager::DoPlayback(bool wasFramestepped /* XINPUT_STATE*pxInpState
 			tempOut.z = charPos->z;
 			SeinCharacter_SetPosition(GetSeinCharacter(), &tempOut);
 		}
-		/*
-		sprintf(this->m_szCurrentManagerState, "[%s]-Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)",
-			this->m_pCurrentInput->m_szFromFile,
-			(m_pCurrentInput->m_bMultiLevelFile) ? this->m_pCurrentInput->m_nInternalLineNo : this->m_pCurrentInput->m_nLineNo,
-			this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
-			this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame, this->m_nTotalFrameCount);*/
-
-			// Packet number is our current frame.
-		//pxInpState->dwPacketNumber = this->m_CurrentFrame;
 
 	}
 

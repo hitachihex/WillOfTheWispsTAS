@@ -110,6 +110,12 @@ public:
 
 	bool HasPos;
 
+	bool HasMouse;
+
+	float MousePosX;
+
+	float MousePosY;
+
 	float xPos;
 	float yPos;
 
@@ -335,6 +341,10 @@ public:
 
 	t_InputRecord(std::string line, unsigned int ln)
 	{
+		this->MousePosX = 0.0f;
+		this->MousePosY = 0.0f;
+		this->HasMouse = false;
+
 		this->xPos = 0.0f;
 		this->yPos = 0.0f;
 		this->HasPos = false;
@@ -429,6 +439,15 @@ public:
 					bWasValidToken = true;
 					continue;
 				}
+				else if (token == "MOUSE")
+				{
+					this->HasMouse = true;
+					this->MousePosX = std::strtof(tokens[i + 1].c_str(), nullptr);
+					this->MousePosY = std::strtof(tokens[i + 2].c_str(), nullptr);
+					bWasValidToken = true;
+					continue;
+
+				}
 				else if (token == "RIGHT")
 				{
 					TempState |= EInputState::RIGHT;
@@ -508,6 +527,7 @@ public:
 					bWasValidToken = true;
 					continue;
 				}
+	
 				else if (token == "START" || token == "PAUSE")
 				{
 					TempState |= EInputState::START;
@@ -520,7 +540,6 @@ public:
 					bWasValidToken = true;
 					continue;
 				}
-
 				else if (token == "CANCEL" || token == "ABILITY3" || token == "BUTTONB")
 				{
 					// this cancels

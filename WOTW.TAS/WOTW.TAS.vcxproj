@@ -148,10 +148,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Addresses.h" />
+    <ClInclude Include="CameraController.h" />
     <ClInclude Include="CompoundButtonInput.h" />
     <ClInclude Include="Core_Input.h" />
     <ClInclude Include="EasyHookUtils.h" />
     <ClInclude Include="GameController.h" />
+    <ClInclude Include="GameplayCamera.h" />
     <ClInclude Include="GameSettings.h" />
     <ClInclude Include="IL2CPPDefs.h" />
     <ClInclude Include="InputButtonProcessorTypedefs.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="SeinCharacter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UI_Cameras.h" />
     <ClInclude Include="UnityEngine_Camera.h" />
     <ClInclude Include="UnityEngine_Input.h" />
     <ClInclude Include="UnityEngine_PhysicsSettings.h" />
@@ -175,6 +178,7 @@
     <ClInclude Include="WOTW_Characters.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core_Input.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="EasyHookUtils.cpp" />
     <ClCompile Include="GameController.cpp" />
@@ -190,6 +194,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UI_Cameras.cpp" />
     <ClCompile Include="UnityPlayer.cpp" />
     <ClCompile Include="WOTW.TAS.cpp" />
   </ItemGroup>

@@ -13,7 +13,7 @@
 unsigned long g_ACLEntries[1] = { 0 };
 extern "C" void __declspec(dllexport) __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo);
 
-oXInputGetState original_XInputGetState = (oXInputGetState)(*(unsigned long long*)XINPUT_GETSTATE_IAT_ADDR);
+oXInputGetState original_XInputGetState = (oXInputGetState)(0x0);
 HOOK_TRACE_INFO WOTW_UnityEngine_GetDeltaTime_HookHandle = { NULL };
 HOOK_TRACE_INFO WOTW_UnityEngine_PlayerLoopInternal_HookHandle = { NULL };
 HOOK_TRACE_INFO WOTW_CompoundButtonInput_GetButton_HookHandle = { NULL };
@@ -51,6 +51,8 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	unsigned long long Assembly_BaseAddr = (unsigned long long)GetModuleHandleA("GameAssembly.dll");
 	UnityPlayer_BaseAddr = (unsigned long long)GetModuleHandleA("UnityPlayer.dll");
 
+
+	// Patch GameController::OnApplicationFocus
 	ApplyPatch((Assembly_BaseAddr)+0x52191B, "\xFF\xC5\x90");
 
 	DWORD dwOldProt;
@@ -59,19 +61,22 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	*(unsigned long long*)(&original_il2cpp_runtime_invoke) = *(unsigned long long*)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA);
 	*(unsigned long long*)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA) = (unsigned long long)il2cpp_runtime_invoke_Hook;
 
+	/*
 	unsigned long long SeinCharacter_getSein_VA = (Assembly_BaseAddr) + CHARACTERS_GETSEIN_NEWPATCH_RVA;
 	unsigned long long SeinCharacter_VAToInstruction = (SeinCharacter_getSein_VA + 0x86);
 	unsigned long long SeinCharacter_relativeCalc = *(unsigned long*)(SeinCharacter_VAToInstruction + 0x03);
 	unsigned long long ptr_SeinCharacter = (SeinCharacter_VAToInstruction + SeinCharacter_relativeCalc) + 0x07;
 
-	// its based in lower memory, always, for me so - LODWORD.
-	gqw_SeinCharacterPtr = (unsigned long)(ptr_SeinCharacter);
-	gqw_GameSettingsInstance_Ptr = (unsigned long)(RelativeAddressCalcFromDatasegment((Assembly_BaseAddr) + PLAYERINPUT_GETWASKEYBOARDUSEDLAST_NEWPATCH_RVA, 0x65));
-	gqw_GameSettingsInstance_Ptr = (unsigned long)(RelativeAddressCalcFromDatasegment((Assembly_BaseAddr) + UNKNOWN_FUNCTION_OFFSETFORQUALITYSETTINGS_NEWPATCH_RVA, 0x2DF));
-	gqw_InstantLoadScenesControllerInstancePtr = (unsigned long)(RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+INSTANTLOADSCENESCONTROLLER_AWAKE_NEWPATCH_RVA, INSTANTLOADSCENESCONTROLLER_OFFSET_TO_PTR));
-	gqw_GameControllerInstancePtr = (unsigned long)(RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+GAMECONTROLLER_RESETSTATISTICS_NEWPATCH_RVA, GAMECONTROLLERINSTANCE_OFFSET_TO_PTR));
-	gqw_ScenesManagerInstancePtr = (unsigned long)(RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+INSTANTLOADSCENESCONTROLLER_GETSCENESMANAGER_NEWPATCH_RVA, INSTANTLOADSCENESCONTROLLER_OFFSET_TO_SM_PTR));
+	gqw_SeinCharacterPtr = (ptr_SeinCharacter);*/
 
+	gqw_SeinCharacterPtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr) + CHARACTERS_GETSEIN_NEWPATCH_RVA, 0x86));
+	gqw_GameSettingsInstance_Ptr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr) + PLAYERINPUT_GETWASKEYBOARDUSEDLAST_NEWPATCH_RVA, 0x65));
+	gqw_GameSettingsInstance_Ptr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr) + UNKNOWN_FUNCTION_OFFSETFORQUALITYSETTINGS_NEWPATCH_RVA, 0x2DF));
+	gqw_InstantLoadScenesControllerInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+INSTANTLOADSCENESCONTROLLER_AWAKE_NEWPATCH_RVA, INSTANTLOADSCENESCONTROLLER_OFFSET_TO_PTR));
+	gqw_GameControllerInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+GAMECONTROLLER_RESETSTATISTICS_NEWPATCH_RVA, GAMECONTROLLERINSTANCE_OFFSET_TO_PTR));
+	gqw_ScenesManagerInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+INSTANTLOADSCENESCONTROLLER_GETSCENESMANAGER_NEWPATCH_RVA, INSTANTLOADSCENESCONTROLLER_OFFSET_TO_SM_PTR));
+	gqw_UICamerasInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr) + PLAYERINPUT_FIXEDUPDATE_NEWPATCH_RVA, 0xB9));
+	gqw_CoreInputInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+PLAYERINPUT_FIXEDUPDATE_NEWPATCH_RVA, 0x27B));
 	g_pSeinCharacter = GetSeinCharacter();
 
 	// Because we have no other way to set it.
@@ -89,6 +94,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 
 	*(unsigned long long*)(&orig_PlayerInput_RefreshControls) = (Assembly_BaseAddr) + 0x12F8400;
 
+	// Patch whatever keeps trying to set the Max Timestep
 	ApplyNops((Assembly_BaseAddr)+GAMEASSEMBLY_MAXTIMESTEP_SETCALL_NEWPATCH_RVA, 0x02);
 
 	NTSTATUS result = 0;
@@ -121,14 +127,14 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 
 	g_pPlaybackManager = new PlaybackManager("Ori.rec");
 	g_pPlaybackManager->SetFrameRate(60, true);
-	*gp_qwUnityEngineTargetFrameRatePtr = g_pPlaybackManager->CurrentFrameRate;
+	//*gp_qwUnityEngineTargetFrameRatePtr = g_pPlaybackManager->CurrentFrameRate;
 	DumpPointersForExternalOSD();
 }
 
 
 float __fastcall WOTW_UnityEngine_GetDeltaTime_Hook()
 {
-	static constexpr float SchixtySeven = (1.0 / 60.0f);
+	static constexpr float SchixtySeven = (float)(1.0f / 60.0f);
 	DoOnceBlock("WOTW_UnityEngine_GetDeltaTimeHook, !bOnce");
 
 	// 1/63 = 0.0158730f
@@ -293,20 +299,8 @@ void __fastcall PlayerInput_FixedUpdate_Hook2(unsigned long long __rcx)
 	if (!g_pPlaybackManager)
 		return original_PlayerInputFixedUpdate(__rcx);
 
-	// do relative calc for this stupid pointer
-    // TODO: Bool check instead, and only do this once.
-	unsigned long long qwUnkB9 = (PlayerInput_FixedUpdate_VA + 0xB9);
-	unsigned long long rel = *(unsigned long*)(qwUnkB9 + 0x03);
-	unsigned long long physAddr = (qwUnkB9 + rel) + 0x07;
 
-	unsigned long long qwUnk0027B = (PlayerInput_FixedUpdate_VA + 0x27B);
-	unsigned long long rel2 = *(unsigned long long*)(qwUnk0027B + 0x03);
-	unsigned long long ptr_PhysAddrCoreInput = (qwUnk0027B + rel2) + 0x07;
-
-	unsigned long long b = (unsigned long)(ptr_PhysAddrCoreInput);
-	b = *(unsigned long long*)(b);
-	Core_Input * pCoreInput = (Core_Input*)(*(unsigned long long*)(b + 0xB8));
-
+	Core_Input * pCoreInput = GetCoreInputInstance();
 	// COME ON, MAN.
 	g_pCoreInput = pCoreInput;
 
@@ -318,18 +312,7 @@ void __fastcall PlayerInput_FixedUpdate_Hook2(unsigned long long __rcx)
 		return original_PlayerInputFixedUpdate(__rcx);
 	}
 
-
-
-	unsigned long long a = (unsigned long)(physAddr);
-	a = *(unsigned long long*)(a);
-	unsigned long long rax = *(unsigned long long*)(a + 0xB8);
-	unsigned long long UI = *(unsigned long long*)(rax + 0x08);
-
-	// RAX=UI.Cameras..
-	rax = *(unsigned long long*)(UI + 0x28);
-
-	UnityEngine_Camera * CurrentCamera = (UnityEngine_Camera*)(*(unsigned long long*)(rax + 0x18));
-
+	UnityEngine_Camera * pCurrentCamera = GetCameras()->m_pCurrent->m_pCameraController->m_pCamera;
 	UnityEngine_Input * pUnityEngineInput = GetUnityEngine_Input();
 	Vector3 mousePos(pUnityEngineInput->m_fMouseX, pUnityEngineInput->m_fMouseY);
 
@@ -337,14 +320,14 @@ void __fastcall PlayerInput_FixedUpdate_Hook2(unsigned long long __rcx)
 	Vector3 viewportPoint;
 
 	// rcx=classptr, rdx=from, r8=outVector
-	ScreenToViewportPoint_Injected(CurrentCamera, &mousePos, &viewportPoint);
+	ScreenToViewportPoint_Injected(pCurrentCamera, &mousePos, &viewportPoint);
 	
+	// Don't let it set it ? Or let it, but set it later anyways. should be fine.
 	pCoreInput->CursorPosition.m_fX = viewportPoint.x;
 	pCoreInput->CursorPosition.m_fY = viewportPoint.y;
 
 	if (g_pPlaybackManager->IsPlayingBack())
 	{
-			// now this makes no sense, we need to give DoPlayback access to the InputButtonProcessors instead.
 		g_pPlaybackManager->DoPlayback(g_bPressedFrameStepThisFrame);
 		orig_PlayerInput_RefreshControls(__rcx);
 		g_bPressedFrameStepThisFrame = false;

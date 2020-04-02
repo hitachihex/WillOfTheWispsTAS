@@ -81,3 +81,6 @@ private:
 
 #pragma pack(pop)
 
+extern unsigned long long gqw_CoreInputInstancePtr;
+extern inline Core_Input * GetCoreInputInstance();
+
