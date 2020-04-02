@@ -47,6 +47,7 @@ Accepted commands are: <br />
     Grapple <br />
     AbilityWheel <br />
     Pos  - for setting oris position, in form of Pos,xpos,ypos <br /> 
+    Mouse - set mouse pos e.g Mouse, xpos, ypos -- values clamped to viewport from top left of screen as 0.0, 0.0 <br />
     Wheel <br />
     Glide <br />
     Grab <br />
