@@ -149,9 +149,12 @@
   <ItemGroup>
     <ClInclude Include="Addresses.h" />
     <ClInclude Include="CameraController.h" />
+    <ClInclude Include="CharacterState.h" />
+    <ClInclude Include="CharacterStateWrapper.h" />
     <ClInclude Include="CompoundButtonInput.h" />
     <ClInclude Include="Core_Input.h" />
     <ClInclude Include="EasyHookUtils.h" />
+    <ClInclude Include="EverythingNeedsMe.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameplayCamera.h" />
     <ClInclude Include="GameSettings.h" />
@@ -159,11 +162,15 @@
     <ClInclude Include="InputButtonProcessorTypedefs.h" />
     <ClInclude Include="InputRecord.h" />
     <ClInclude Include="InstantLoadScenesController.h" />
+    <ClInclude Include="IsOnCollisionState.h" />
     <ClInclude Include="PlaybackManager.h" />
     <ClInclude Include="PlayerInputTypeDefs.h" />
     <ClInclude Include="QualitySettings.h" />
     <ClInclude Include="ScenesManager.h" />
+    <ClInclude Include="SeinAbilities.h" />
     <ClInclude Include="SeinCharacter.h" />
+    <ClInclude Include="SeinDashNew.h" />
+    <ClInclude Include="SeinWallJump.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UI_Cameras.h" />
@@ -181,6 +188,7 @@
     <ClCompile Include="Core_Input.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="EasyHookUtils.cpp" />
+    <ClCompile Include="EverythingNeedsMe.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameSettings.cpp" />
     <ClCompile Include="InstantLoadScenesController.cpp" />
@@ -188,6 +196,8 @@
     <ClCompile Include="QualitySettings.cpp" />
     <ClCompile Include="ScenesManager.cpp" />
     <ClCompile Include="SeinCharacter.cpp" />
+    <ClCompile Include="SeinDashNew.cpp" />
+    <ClCompile Include="SeinWallJump.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

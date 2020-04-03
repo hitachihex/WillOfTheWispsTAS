@@ -102,6 +102,27 @@
     <ClInclude Include="UI_Cameras.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SeinDashNew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IsOnCollisionState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SeinWallJump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SeinAbilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterStateWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EverythingNeedsMe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -144,6 +165,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core_Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SeinDashNew.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SeinWallJump.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EverythingNeedsMe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

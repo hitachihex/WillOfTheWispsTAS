@@ -10,6 +10,12 @@ public:
 		this->m_fY = 0.0f;
 	}
 	
+	t_Vector2(float x, float y)
+	{
+		this->m_fX = x;
+		this->m_fY = y;
+	}
+	
 	// 0x00 - 0x03
 	float m_fX;
 

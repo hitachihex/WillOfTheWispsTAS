@@ -190,10 +190,12 @@ void PlaybackManager::InitPlayback(bool bReload = true)
 
 	if (this->m_bPlayingBack && bReload)
 	{
+		memset(&this->m_szCurrentManagerState[0], 0, 800);
 		this->m_bPlayingBack = false;
 		return;
 	}
 
+	memset(&this->m_szCurrentManagerState[0], 0, 800);
 	this->SetFrameRate(60, true);
 
 	bool result = this->ReadInputFile();
@@ -306,7 +308,7 @@ bool PlaybackManager::IsGameLoading()
 }
 
 #pragma warning(disable : 4996)
-void PlaybackManager::DoPlayback(bool wasFramestepped /* XINPUT_STATE*pxInpState*/)
+void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFixedUpdate)
 {
 
 	if (!this->m_bPlayingBack)
@@ -352,6 +354,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped /* XINPUT_STATE*pxInpState
 						// disable playback
 						this->m_bPlayingBack = false;
 						DebugOutput("Index+1 > ReloadedScope, playback done.");
+						memset(&this->m_szCurrentManagerState[0], 0, 800);
 
 						return;
 					}
@@ -365,6 +368,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped /* XINPUT_STATE*pxInpState
 						// Disable playback
 						this->m_bPlayingBack = false;
 						DebugOutput("Index+1 > inputSize, playback done.");
+						memset(&this->m_szCurrentManagerState[0], 0, 800);
 
 						return;
 					}
@@ -437,7 +441,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped /* XINPUT_STATE*pxInpState
 		g_pCoreInput->VerticalDigiPad = (int)m_pCurrentInput->YAxis;
 
 		// BF tas did !HasPos before this? :think:
-		if (m_pCurrentInput->HasMouse)
+		if (m_pCurrentInput->HasMouse && !m_pCurrentInput->HasPos)
 		{
 			g_pCoreInput->CursorPosition.m_fX = m_pCurrentInput->MousePosX;
 			g_pCoreInput->CursorPosition.m_fY = m_pCurrentInput->MousePosY;
@@ -446,11 +450,15 @@ void PlaybackManager::DoPlayback(bool wasFramestepped /* XINPUT_STATE*pxInpState
 		}
 		else
 		{
+			// Do we want to set this? Annoying if we can't move it around and see..
+			g_pCoreInput->CursorPosition.m_fX = cursorPosFromFixedUpdate->m_fX;
+			g_pCoreInput->CursorPosition.m_fY = cursorPosFromFixedUpdate->m_fY;
 			g_pCoreInput->CursorMoved = false;
 			GetGameSettingsInstance()->m_CurrentControlScheme = EControlScheme::Controller;
 		}
 
 
+		// TODO: Find these inside Core.Input's
 		g_pButtonA->Update(m_pCurrentInput->IsJump());
 		g_pButtonX->Update(m_pCurrentInput->IsAbilityOne());
 		g_pButtonY->Update(m_pCurrentInput->IsAbilityTwo());
@@ -475,17 +483,38 @@ void PlaybackManager::DoPlayback(bool wasFramestepped /* XINPUT_STATE*pxInpState
 		Vector3 tempOut;
 		Vector3 tempOut2;
 		auto pSeinChar = GetSeinCharacter();
+
+		// TODO: Read from Rigidbody pointer directly
 		Vector3 * charPos = SeinCharacter_GetPosition(&tempOut, pSeinChar);
 
+		// TODO:
 		// I think there's "AdditiveSpeed" now, maybe you should just look at that,
 		// instead of calling this function each framestep
 		//&pSeinChar->pPlatformBehaviour->pPlatformMovement->m_LocalSpeed;
 		Vector3 * pCharSpeed = CharPlatformMovement_GetRigidbodyVelocity(&tempOut2, pSeinChar->pPlatformBehaviour->pPlatformMovement);
 	
+		std::string CharacterStateInfo = "";
+
+		if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pOnGround->IsOn)
+			CharacterStateInfo += "Grounded, ";
+
+
+		if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pCeiling->IsOn)
+			CharacterStateInfo += "OnCeiling, ";
+
+		if (pSeinChar->IsFaling())
+			CharacterStateInfo += "Falling, ";
+
+		if (SeinDashNew_CanDash(pSeinChar->m_pAbilities->DashNewWrapper->State))
+			CharacterStateInfo += "CanDash";
+
+		if (SeinWallJump_CanPerformWallJump(pSeinChar->m_pAbilities->WallJumpWrapper->State))
+			CharacterStateInfo += "CanWallJump, ";
+
 		// Done / Frames
-		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharInfo: %s", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
 			this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame, this->m_nTotalFrameCount, g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY,
-			charPos->x, charPos->y, pCharSpeed->x, pCharSpeed->y);
+			charPos->x, charPos->y, pCharSpeed->x, pCharSpeed->y, CharacterStateInfo.c_str());
 
 		if (m_pCurrentInput->HasPos)
 		{
@@ -498,6 +527,8 @@ void PlaybackManager::DoPlayback(bool wasFramestepped /* XINPUT_STATE*pxInpState
 
 			// whatever the heck it was, before
 			tempOut.z = charPos->z;
+
+			// TODO: Set to Rigidbody pointer directly
 			SeinCharacter_SetPosition(GetSeinCharacter(), &tempOut);
 		}
 

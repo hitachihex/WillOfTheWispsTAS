@@ -21,3 +21,34 @@ inline SeinCharacter * GetSeinCharacter()
 
 	return (SeinCharacter*)(rax);
 }
+
+bool SeinCharacter::IsOnWall()
+{
+	float LocalSpeedX = this->pPlatformBehaviour->pPlatformMovement->m_LocalSpeed.x;
+
+	if (LocalSpeedX < 0.0f)
+		return this->pPlatformBehaviour->pPlatformMovement->m_pWallLeft->IsOn;
+
+	return this->pPlatformBehaviour->pPlatformMovement->m_pWallRight->IsOn;
+
+}
+
+bool SeinCharacter::IsFaling()
+{
+	CharacterPlatformMovement * pPlatformMovement = this->pPlatformBehaviour->pPlatformMovement;
+
+	bool ret = false;
+	if (pPlatformMovement->m_LocalSpeed.y > 0.0001f)
+	{
+		// says we're on ground, guess we aren't falling.
+		if (pPlatformMovement->m_pOnGround->IsOn)
+			ret = false;
+	}
+	else
+	{
+		if (pPlatformMovement->m_LocalSpeed.y <= 0.0f)
+			ret = true;
+	}
+
+	return ret;
+}

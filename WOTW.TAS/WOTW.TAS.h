@@ -13,6 +13,7 @@
 #include "GameController.h"
 #include "ScenesManager.h"
 #include "UnityPlayer.h"
+#include "EverythingNeedsMe.h"
 #include <Xinput.h>
 
 extern unsigned long g_ACLEntries[1];

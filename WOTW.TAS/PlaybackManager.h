@@ -72,7 +72,7 @@ public:
 
 	unsigned long GetTotalFrameCount();
 
-	void DoPlayback(bool /*XINPUT_STATE*/);
+	void DoPlayback(bool, Vector2*);
 
 	unsigned long GetCurrentSeed();
 

@@ -48,7 +48,7 @@ fnScreenToViewportPoint_Injected ScreenToViewportPoint_Injected = (fnScreenToVie
 unsigned long long PlayerInput_FixedUpdate_VA = 0x0;
 void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 {
-	unsigned long long Assembly_BaseAddr = (unsigned long long)GetModuleHandleA("GameAssembly.dll");
+	Assembly_BaseAddr = (unsigned long long)GetModuleHandleA("GameAssembly.dll");
 	UnityPlayer_BaseAddr = (unsigned long long)GetModuleHandleA("UnityPlayer.dll");
 
 
@@ -80,6 +80,8 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	g_pSeinCharacter = GetSeinCharacter();
 
 	// Because we have no other way to set it.
+	*(unsigned long long*)(&SeinDashNew_CanDash) = (Assembly_BaseAddr) + SEINDASHNEW_GETCANDASH_RVA;
+	*(unsigned long long*)(&SeinWallJump_CanPerformWallJump) = (Assembly_BaseAddr) + SEINWALLJUMP_CANPERFORMWALLJUMP_RVA;
 	*(unsigned long long*)(&original_WOTW_UnityEngine_PlayerLoopInternal) = (UnityPlayer_BaseAddr) + UNITYENGINE_PLAYERLOOPINTERNAL_NEWPATCH_RVA;
 	*(unsigned long long*)(&original_UnityEngine_GetMousePositonInjected) = (UnityPlayer_BaseAddr)+ UNITYENGINE_GETMOUSEPOSITION_INJECTED_RVA;
 	*(unsigned long long*)(&ScreenToViewportPoint_Injected) = (UnityPlayer_BaseAddr) + UNITYENGINE_SCREENTOVIEWPORTPOINTINJECTED_NEWPATCH_RVA;
@@ -323,12 +325,15 @@ void __fastcall PlayerInput_FixedUpdate_Hook2(unsigned long long __rcx)
 	ScreenToViewportPoint_Injected(pCurrentCamera, &mousePos, &viewportPoint);
 	
 	// Don't let it set it ? Or let it, but set it later anyways. should be fine.
-	pCoreInput->CursorPosition.m_fX = viewportPoint.x;
-	pCoreInput->CursorPosition.m_fY = viewportPoint.y;
 
+	// Don't do this
+	//pCoreInput->CursorPosition.m_fX = viewportPoint.x;
+	//pCoreInput->CursorPosition.m_fY = viewportPoint.y;
+
+	Vector2 newVPP(viewportPoint.x, viewportPoint.y);
 	if (g_pPlaybackManager->IsPlayingBack())
 	{
-		g_pPlaybackManager->DoPlayback(g_bPressedFrameStepThisFrame);
+		g_pPlaybackManager->DoPlayback(g_bPressedFrameStepThisFrame, &newVPP);
 		orig_PlayerInput_RefreshControls(__rcx);
 		g_bPressedFrameStepThisFrame = false;
 	}
