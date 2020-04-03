@@ -32,8 +32,10 @@ namespace Buggy
         private bool foundPointers = false;
 
         private string filePathToPointers = string.Empty;
-        private UInt32 ptrManagerStringState = 0;
-        private UInt32 ptrPaused = 0;
+
+        // uint32
+        private UInt64 ptrManagerStringState = 0;
+        private UInt64 ptrPaused = 0;
 
 
         private bool FindProcess()
@@ -68,9 +70,9 @@ namespace Buggy
                         string ptrData = System.IO.File.ReadAllText(filePathToPointers);
                         string[] ptrs = ptrData.Split(',');
 
-                        UInt32.TryParse(ptrs[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ptrManagerStringState);
+                        UInt64.TryParse(ptrs[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ptrManagerStringState);
                         System.Diagnostics.Trace.WriteLine(string.Format("stringStatePtr: {0:X}", ptrManagerStringState));
-                        UInt32.TryParse(ptrs[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ptrPaused);
+                        UInt64.TryParse(ptrs[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ptrPaused);
 
                         foundPointers = true;
                     }
@@ -134,13 +136,13 @@ namespace Buggy
             if (procHandle == IntPtr.Zero)
                 return;
 
-            bool isPaused = BitConverter.ToBoolean(ReadValue(ptrPaused, 1), 0);
+            bool isPaused = BitConverter.ToBoolean(ReadValue64(ptrPaused, 1), 0);
 
 
             string playbackString = string.Empty;
             string playerStateString = string.Empty;
 
-            playbackString = System.Text.Encoding.UTF8.GetString(ReadValue(ptrManagerStringState, 400));
+            playbackString = System.Text.Encoding.UTF8.GetString(ReadValue64(ptrManagerStringState, 800));
 
 
             lblmyinfo.Content = "Paused:" + isPaused + "\n" /*+ playerStateString + "\n"*/ + playbackString;
@@ -176,11 +178,45 @@ namespace Buggy
             Byte[] myValBuffer = new Byte[size];
             int bytesRead = 0;
 
-            ReadProcessMemory((int)processHandle, address, myValBuffer, myValBuffer.Length, ref bytesRead);
+            if (!ReadProcessMemory((int)processHandle, address, myValBuffer, myValBuffer.Length, ref bytesRead))
+                System.Diagnostics.Debug.WriteLine("Couldn't read from {0:X} address", address);
 
             return myValBuffer;
         }
 
+        private Byte[] ReadValue64(UInt64 address, int size)
+        {
+            Byte[] myValBuffer = new Byte[size];
+            int bytesRead = 0;
+
+            if (!ReadProcessMemory((int)processHandle, address, myValBuffer, myValBuffer.Length, ref bytesRead))
+                System.Diagnostics.Debug.WriteLine("Couldn't read from {0:X} address", address);
+
+            return myValBuffer;
+        }
+
+
+        private UInt64 ReadAddress64(UInt64 address, UInt32[] offsets)
+        {
+            int bytesRead = 0;
+
+            if (offsets != null)
+            {
+                for (int i = 0; i < offsets.Length; i++)
+                {
+                    ReadProcessMemory((int)processHandle, address + offsets[i], myBuffer, myBuffer.Length, ref bytesRead);
+                    UInt64.TryParse(ByteArrayToString(myBuffer), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out address);
+                    address = (UInt32)BitConverter.ToInt64(myBuffer, 0);
+                }
+                return address;
+            }
+
+            ReadProcessMemory((int)processHandle, address, myBuffer, myBuffer.Length, ref bytesRead);
+            UInt64.TryParse(ByteArrayToString(myBuffer), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out address);
+            address = (UInt64)BitConverter.ToInt64(myBuffer, 0);
+
+            return address;
+        }
         private UInt32 ReadAddress(UInt32 address, UInt32[] offsets)
         {
             int bytesRead = 0;
