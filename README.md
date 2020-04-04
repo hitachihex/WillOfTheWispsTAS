@@ -32,6 +32,8 @@ Note: It won't understep (e.g go backwards and redo) you can only edit a current
 Commands read from input file are in the format of:
    frames, Action
    
+Commnds are case-insensitive.
+   
 Accepted commands are: <br />
     Runto - to be placed under a line you want to fast forward playback to, then the game will pause. <br />
     Walkto - to be placed under a line you want to normal speed playback to, then the game will pause. <br />
@@ -46,6 +48,7 @@ Accepted commands are: <br />
     Bash <br />
     Grapple <br />
     AbilityWheel <br />
+    Rng, Random, Seed - for setting the random seed of the game. <br />
     Pos  - for setting oris position, in form of Pos,xpos,ypos <br /> 
     Mouse - set mouse pos e.g Mouse, xpos, ypos -- values clamped to viewport from top left of game window as 0.0, 0.0 <br />
     Wheel <br />
