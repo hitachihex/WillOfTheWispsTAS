@@ -449,7 +449,7 @@ public:
 					bWasValidToken = true;
 					continue;
 				}
-				else if (token == "SEED")
+				else if (token == "SEED" || token == "RNG" || token == "RANDOM")
 				{
 					this->HasSeed = true;
 					this->m_nSeed = std::stoul(tokens[i + 1].c_str(), nullptr);

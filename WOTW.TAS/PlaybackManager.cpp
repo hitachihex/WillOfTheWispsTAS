@@ -420,10 +420,12 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 			this->m_pCurrentInput->m_Done++;
 		}
 
+		if (this->m_pCurrentInput->HasSeed)
+			this->m_nCurrentSeed = this->m_pCurrentInput->m_nSeed;
+
 		//  Increase current frame.
 		this->m_CurrentFrame++;
 
-		// Is this going to crash? I think this will crash.
 		GetFixedRandomInstance()->FixedUpdateIndex = (this->m_nCurrentSeed + this->m_CurrentFrame);
 
 		g_pCoreInput->HorizontalAnalogLeft = m_pCurrentInput->XAxis;
