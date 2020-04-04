@@ -1,8 +1,10 @@
 #pragma once
 #include "Vector3.h"
 //#include "CharacterState.h"
+#include "Rigidbody.h"
 #include "SeinAbilities.h"
 #include "IsOnCollisionState.h"
+#include "CharacterVisuals.h"
 #pragma pack(push, 1)
 
 
@@ -60,6 +62,23 @@ public:
 	// 0xD0 - 0xDB
 	Vector3 m_PreviousPosition;
 
+	// 0xDC
+	bool m_b00DC;
+	
+	// 0xDD
+	bool m_b00DD;
+
+	// 0xDE
+	bool m_b00DE;
+
+	// 0xDF
+	bool m_b00DF;
+
+	// 0xE0 - 0xE7
+	Rigidbody * m_pRigidbody;
+
+	// 0xE8 - ??
+
 } CharacterPlatformMovement;
 
 typedef struct t_PlatformBehaviour
@@ -68,16 +87,22 @@ public:
 	// 0x00 - 0x17
 	unsigned char uc_Unk0000_0017[0x18];
 
-	// 0x18 - ??
+	// 0x18 - 0x1F
 	CharacterPlatformMovement * pPlatformMovement;
+
+	// 0x20 - 0x77
+	unsigned char uc_Unk0020_0077[0x78 - 0x20];
+
+	// 0x78 - 0x7F
+	CharacterVisuals * m_pVisuals;
+
+	// 0x80 ---
 } PlatformBehaviour;
 
 class SeinCharacter
 {
 public:
 
-	// 0x98 
-	// PlatformBehaviour m_PlatformBehaviour
 
 	// 0x00 - 0x17
 	unsigned char uc_Unk0000_0017[0x18];
@@ -95,19 +120,22 @@ public:
 	PlatformBehaviour * pPlatformBehaviour;
 
 	
-	/*
-	inline Vector3 * GetLocalSpeed()
-	{
-		unsigned long long PlatformBehaviour = *(unsigned long long*)((unsigned long)this + 0x98);
-		unsigned long long PlatformMovement = *(unsigned long long*)(PlatformBehaviour + 0x18);
-
-		return (Vector3*)(*(unsigned long long*)(PlatformMovement + 0x80));
-	}*/
-
 	// ----- methods
 	bool IsOnWall();
 
-	bool IsFaling();
+	bool IsFalling();
+
+	Rigidbody * GetRigidbody();
+
+	Vector3 * GetRigidbodyPreviousPosition();
+
+	Vector3 * GetRigidbodyPosition();
+
+	Vector3 * GetRigidbodyVelocity();
+
+	void SetRigidbodyPosition(float, float, float, bool);
+
+	void SetVelocity(float, float, float, bool);
 
 };
 #pragma pack(pop)

@@ -14,6 +14,9 @@
 //
 #define M_PI2  3.1415926535897931f
 
+static constexpr unsigned int KINEMATIC_ENABLED = 1;
+static constexpr unsigned int KINEMATIC_DISABLED = 0;
+
 enum EInputState
 {
 	// You did nothing
@@ -68,7 +71,9 @@ enum EInputState
 
 	UNPAUSE              = 1 << 16,
 
-	SLOWDOWN             = 1 << 17
+	SLOWDOWN             = 1 << 17,
+
+	ENABLE_KINEMATICS    = 1 << 18
 
 };
 
@@ -83,10 +88,6 @@ public:
 	int m_Done;
 
 	unsigned long long m_nLineNo;
-
-
-
-	// ------- More garbage, for now
 
 	bool Slow;
 
@@ -109,6 +110,12 @@ public:
 	bool Ability3;
 
 	bool HasPos;
+
+	bool HasKinematicSetting;
+	unsigned int Kinematicism;
+
+	bool HasSeed;
+	unsigned long m_nSeed;
 
 	bool HasMouse;
 
@@ -337,6 +344,7 @@ public:
 		return this->m_InputState == EInputState::DEFAULT_NONE;
 	}
 
+	
 #pragma warning(disable : 4996)
 
 	t_InputRecord(std::string line, unsigned int ln)
@@ -344,6 +352,9 @@ public:
 		this->MousePosX = 0.0f;
 		this->MousePosY = 0.0f;
 		this->HasMouse = false;
+
+		this->HasKinematicSetting = false;
+		this->Kinematicism = KINEMATIC_DISABLED;
 
 		this->xPos = 0.0f;
 		this->yPos = 0.0f;
@@ -428,6 +439,20 @@ public:
 				{
 					this->Slow = true;
 					TempState |= EInputState::SLOWDOWN;
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "KINEMATIC")
+				{
+					this->HasKinematicSetting = true;
+					this->Kinematicism = std::stoul(tokens[i + 1].c_str(), nullptr);
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "SEED")
+				{
+					this->HasSeed = true;
+					this->m_nSeed = std::stoul(tokens[i + 1].c_str(), nullptr);
 					bWasValidToken = true;
 					continue;
 				}
@@ -548,13 +573,7 @@ public:
 					bWasValidToken = true;
 					continue;
 				}
-				else if (token == "SEED")
-				{
 
-					bWasValidToken = true;
-					continue;
-				}
-				
 				else if (token == "ANGLE")
 				{
 				    float tempFloat = std::strtof(tokens[i + 1].c_str(), nullptr);

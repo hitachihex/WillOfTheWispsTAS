@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PlaybackManager.h"
 
+
 // This is set in NativeInjectionEntryPoint, we need access to it because DoPlayback formats the playback state string.
 fnSeinCharacter_GetPosition SeinCharacter_GetPosition = (fnSeinCharacter_GetPosition)(0x0);
 fnSeinCharacter_SetPosition SeinCharacter_SetPosition = (fnSeinCharacter_SetPosition)(0x0);
@@ -378,9 +379,6 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 
 			this->m_pCurrentInput = this->m_Inputs[++this->m_InputIndex];
 
-			// RNG, fast forward, other stuff here, etc
-
-
 
 			// Breakpoints
 			if (this->m_RuntoLineNo != -1)
@@ -425,6 +423,9 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		//  Increase current frame.
 		this->m_CurrentFrame++;
 
+		// Is this going to crash? I think this will crash.
+		GetFixedRandomInstance()->FixedUpdateIndex = (this->m_nCurrentSeed + this->m_CurrentFrame);
+
 		g_pCoreInput->HorizontalAnalogLeft = m_pCurrentInput->XAxis;
 		g_pCoreInput->Horizontal = m_pCurrentInput->XAxis;
 
@@ -450,48 +451,32 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		}
 		else
 		{
-			// Do we want to set this? Annoying if we can't move it around and see..
 			g_pCoreInput->CursorPosition.m_fX = cursorPosFromFixedUpdate->m_fX;
 			g_pCoreInput->CursorPosition.m_fY = cursorPosFromFixedUpdate->m_fY;
 			g_pCoreInput->CursorMoved = false;
 			GetGameSettingsInstance()->m_CurrentControlScheme = EControlScheme::Controller;
 		}
 
+		auto pCmd = GetCmdInstance();
 
-		// TODO: Find these inside Core.Input's
-		g_pButtonA->Update(m_pCurrentInput->IsJump());
-		g_pButtonX->Update(m_pCurrentInput->IsAbilityOne());
-		g_pButtonY->Update(m_pCurrentInput->IsAbilityTwo());
-		g_pButtonB->Update(m_pCurrentInput->IsAbilityThree());
-
-		g_pMenuSelect->Update(m_pCurrentInput->IsJump());
-		g_pPause->Update(m_pCurrentInput->IsStart());
-		g_pMenuClose->Update(m_pCurrentInput->IsUnpause());
-
-		g_pJump->Update(m_pCurrentInput->IsJump());
-		g_pAbility1->Update(m_pCurrentInput->IsAbilityOne());
-		g_pAbility2->Update(m_pCurrentInput->IsAbilityTwo());
-		g_pAbility3->Update(m_pCurrentInput->IsAbilityThree());
-
-		g_pAbilityWheel->Update(m_pCurrentInput->IsAbilityWheel());
-		g_pDash->Update(m_pCurrentInput->IsDash());
-		g_pBash->Update(m_pCurrentInput->IsBash());
-		g_pGrapple->Update(m_pCurrentInput->IsGrapple());
-		g_pGrab->Update(m_pCurrentInput->IsGlide());
-		g_pGlide->Update(m_pCurrentInput->IsGlide());
+		pCmd->MenuSelect->Update(m_pCurrentInput->IsJump());
+		pCmd->Jump->Update(m_pCurrentInput->IsJump());
+		pCmd->MenuClose->Update(m_pCurrentInput->IsUnpause());
+		pCmd->Ability1->Update(m_pCurrentInput->IsAbilityOne());
+		pCmd->Ability2->Update(m_pCurrentInput->IsAbilityTwo());
+		pCmd->Ability3->Update(m_pCurrentInput->IsAbilityThree());
+		pCmd->OpenWeaponWheel->Update(m_pCurrentInput->IsAbilityWheel());
+		pCmd->Dash->Update(m_pCurrentInput->IsDash());
+		pCmd->Bash->Update(m_pCurrentInput->IsBash());
+		pCmd->Grab->Update(m_pCurrentInput->IsGlide());
+		pCmd->Glide->Update(m_pCurrentInput->IsGlide());
 
 		Vector3 tempOut;
 		Vector3 tempOut2;
 		auto pSeinChar = GetSeinCharacter();
 
-		// TODO: Read from Rigidbody pointer directly
-		Vector3 * charPos = SeinCharacter_GetPosition(&tempOut, pSeinChar);
-
-		// TODO:
-		// I think there's "AdditiveSpeed" now, maybe you should just look at that,
-		// instead of calling this function each framestep
-		//&pSeinChar->pPlatformBehaviour->pPlatformMovement->m_LocalSpeed;
-		Vector3 * pCharSpeed = CharPlatformMovement_GetRigidbodyVelocity(&tempOut2, pSeinChar->pPlatformBehaviour->pPlatformMovement);
+		Vector3 * charPos = pSeinChar->GetRigidbodyPosition();
+		Vector3 * pCharSpeed = pSeinChar->GetRigidbodyVelocity();
 	
 		std::string CharacterStateInfo = "";
 
@@ -502,22 +487,28 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pCeiling->IsOn)
 			CharacterStateInfo += "OnCeiling, ";
 
-		if (pSeinChar->IsFaling())
+		if (pSeinChar->IsFalling())
 			CharacterStateInfo += "Falling, ";
 
-		if (SeinDashNew_CanDash(pSeinChar->m_pAbilities->DashNewWrapper->State))
-			CharacterStateInfo += "CanDash";
+		if(pSeinChar->m_pAbilities->DashNewWrapper->State != nullptr)
+			if (SeinDashNew_CanDash(pSeinChar->m_pAbilities->DashNewWrapper->State))
+				CharacterStateInfo += "CanDash";
 
-		if (SeinWallJump_CanPerformWallJump(pSeinChar->m_pAbilities->WallJumpWrapper->State))
-			CharacterStateInfo += "CanWallJump, ";
+		if(pSeinChar->m_pAbilities->WallJumpWrapper->State != nullptr)
+			if (SeinWallJump_CanPerformWallJump(pSeinChar->m_pAbilities->WallJumpWrapper->State))
+				CharacterStateInfo += "CanWallJump, ";
 
 		// Done / Frames
-		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharInfo: %s", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
-			this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame, this->m_nTotalFrameCount, g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY,
+		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nRNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharInfo: %s", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+			this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame, this->m_nTotalFrameCount, GetFixedRandomInstance()->FixedUpdateIndex, g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY,
 			charPos->x, charPos->y, pCharSpeed->x, pCharSpeed->y, CharacterStateInfo.c_str());
 
 		if (m_pCurrentInput->HasPos)
 		{
+			/*
+               TODO: See if setting kinematicism and then disabling it afterwards
+		             can make this more consistent.
+            */
 			tempOut.x = m_pCurrentInput->xPos;
 			tempOut.y = m_pCurrentInput->yPos;
 
@@ -530,6 +521,12 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 
 			// TODO: Set to Rigidbody pointer directly
 			SeinCharacter_SetPosition(GetSeinCharacter(), &tempOut);
+		}
+
+		if (m_pCurrentInput->HasKinematicSetting)
+		{
+			bool kinEnabled = (m_pCurrentInput->Kinematicism == KINEMATIC_ENABLED);
+			Rigidbody_SetIsKinematic(GetSeinCharacter()->pPlatformBehaviour->pPlatformMovement->m_pRigidbody, kinEnabled);
 		}
 
 	}
@@ -558,6 +555,9 @@ inline void PlaybackManager::PlaybackFormatAll()
 void PlaybackManager::FormatWithoutPlayback()
 {
 
+	// This crash me?
+	memset(&this->m_szCurrentManagerState[0], 0, 800);
+
 	Vector3 tempOut;
 	Vector3 tempOut2;
 	auto pSeinChar = GetSeinCharacter();
@@ -568,17 +568,38 @@ void PlaybackManager::FormatWithoutPlayback()
 	if (!pSeinChar)
 		return;
 
-	Vector3 * charPos = SeinCharacter_GetPosition(&tempOut, pSeinChar);
-	Vector3 * pCharSpeed = CharPlatformMovement_GetRigidbodyVelocity(&tempOut2, pSeinChar->pPlatformBehaviour->pPlatformMovement);
+	Vector3 * charPos = pSeinChar->GetRigidbodyPosition();
+	Vector3 * pCharSpeed = pSeinChar->GetRigidbodyVelocity();
 
 	if (!pCharSpeed)
 		return;
 	
-	// its annoying to see the doubles when this doesn't clear our string..
-	// how to fix?
-	sprintf(this->m_szCurrentManagerState, "Cursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f",
+	std::string CharacterStateInfo = "";
+
+	if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pOnGround->IsOn)
+		CharacterStateInfo += "Grounded, ";
+
+	if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pCeiling->IsOn)
+		CharacterStateInfo += "OnCeiling, ";
+
+	if (pSeinChar->IsFalling())
+		CharacterStateInfo += "Falling, ";
+
+	if (pSeinChar->IsOnWall())
+		CharacterStateInfo += "OnWall, ";
+	 
+	if(pSeinChar->m_pAbilities->DashNewWrapper->State != nullptr)
+		if (SeinDashNew_CanDash(pSeinChar->m_pAbilities->DashNewWrapper->State))
+			CharacterStateInfo += "CanDash, ";
+
+	if(pSeinChar->m_pAbilities->WallJumpWrapper->State != nullptr)
+		if (SeinWallJump_CanPerformWallJump(pSeinChar->m_pAbilities->WallJumpWrapper->State))
+			CharacterStateInfo += "CanWallJump, ";
+
+	sprintf(this->m_szCurrentManagerState, "RNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharStateInfo: %s",
+		GetFixedRandomInstance()->FixedUpdateIndex,
 		g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY, charPos->x, charPos->y,
-		pCharSpeed->x, pCharSpeed->y);
+		pCharSpeed->x, pCharSpeed->y, CharacterStateInfo.c_str());
 }
 
 InputRecord * PlaybackManager::GetCurrentInput()

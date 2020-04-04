@@ -1,6 +1,8 @@
 #pragma once
 #pragma pack(push, 1)
 
+#include "ArrayWrapper.h"
+#include "InputButtonProcessorTypedefs.h"
 #include "Vector2.h"
 typedef struct t_Core_Input
 {
@@ -75,6 +77,8 @@ public:
 	// 0x47
 	bool m_b047;
 
+	// 0x48 - 0x4F
+	ArrayWrapper<InputButtonProcessor> * m_pAllInputProcessors;
 protected:
 private:
 } Core_Input;

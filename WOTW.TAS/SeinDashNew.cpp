@@ -1,7 +1,10 @@
 #include "stdafx.h"
+#include "EverythingNeedsMe.h"
+#include "EasyHookUtils.h"
 #include "SeinDashNew.h"
 #include "SeinCharacter.h"
 
+HOOK_TRACE_INFO SeinDashNew_OnProcessRootMotion_HookHandle = { NULL };
 void SeinDashNew::UpdateDash()
 {
 	float predictedTravelDistance = this->m_predictedTravelDistance;
@@ -42,4 +45,20 @@ float SeinDashNew::GetRootMotionScale(float rootMotionDistance)
 	return 0.0f;
 }
 
+void __fastcall SeinDashNew_OnProcessRootMotion_Hook(SeinDashNew* pThis, Vector3 * rootVelocity)
+{
+	DoOnceBlock("SeinDashNew_OnProcessRootMotion_Hook, !bOnce");
+
+	/* No.
+	if (pThis->m_isDashing)
+	{
+		if (!Rigidbody_GetIsKinematic(pThis->m_pSein->pPlatformBehaviour->pPlatformMovement->m_pRigidbody))
+			Rigidbody_SetIsKinematic(pThis->m_pSein->pPlatformBehaviour->pPlatformMovement->m_pRigidbody, true);
+	}*/
+
+	return original_SeinDashNew_OnProcessRootMotion(pThis, rootVelocity);
+}
+
+// do this in NativeInjectionEntryPoint
+fnSeinDashNew_OnProcessRootMotion original_SeinDashNew_OnProcessRootMotion = (fnSeinDashNew_OnProcessRootMotion)(0x0);
 fnSeinDashNew_CanDash SeinDashNew_CanDash = (fnSeinDashNew_CanDash)(0x0);

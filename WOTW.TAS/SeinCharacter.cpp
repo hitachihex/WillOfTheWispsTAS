@@ -2,22 +2,18 @@
 #include "EasyHookUtils.h"
 #include "SeinCharacter.h"
 
+
+static constexpr float epsilon = 0.0001f;
+static constexpr float re = 0.0f;
 unsigned long long gqw_SeinCharacterPtr = 0x0;
 
-
-// prod it, slightly
 inline SeinCharacter * GetSeinCharacter()
 {
-	// deref 0
-
 	unsigned long long rax = *(unsigned long long*)(gqw_SeinCharacterPtr);
-	//DebugOutput("Dereferenced 0x0 (SeinCharPtr)");
 
 	rax = *(unsigned long long*)(rax + 0xB8);
-	//DebugOutput("Dereferenced 0xB8 (SeinCharPtr)");
 
 	rax = *(unsigned long long*)(rax + 0x10);
-	//DebugOutput("Dereferenced 0x10 (SeinCharPtr)");
 
 	return (SeinCharacter*)(rax);
 }
@@ -33,12 +29,12 @@ bool SeinCharacter::IsOnWall()
 
 }
 
-bool SeinCharacter::IsFaling()
+bool SeinCharacter::IsFalling()
 {
 	CharacterPlatformMovement * pPlatformMovement = this->pPlatformBehaviour->pPlatformMovement;
 
 	bool ret = false;
-	if (pPlatformMovement->m_LocalSpeed.y > 0.0001f)
+	if (pPlatformMovement->m_LocalSpeed.y > epsilon)
 	{
 		// says we're on ground, guess we aren't falling.
 		if (pPlatformMovement->m_pOnGround->IsOn)
@@ -46,9 +42,46 @@ bool SeinCharacter::IsFaling()
 	}
 	else
 	{
-		if (pPlatformMovement->m_LocalSpeed.y <= 0.0f)
+		if (pPlatformMovement->m_LocalSpeed.y <= re)
 			ret = true;
 	}
 
 	return ret;
+}
+
+Rigidbody * SeinCharacter::GetRigidbody()
+{
+	return this->pPlatformBehaviour->pPlatformMovement->m_pRigidbody;
+}
+
+void SeinCharacter::SetRigidbodyPosition(float newX, float newY, float newZ, bool setPrevious=true)
+{
+	auto pRb = this->GetRigidbody();
+	pRb->m_pInternalState->m_pInternal2->m_Position.Set(newX, newY, newZ);
+	if (setPrevious)
+		pRb->m_pInternalState->m_pInternal2->m_PrevPosition.Set(newX, newY, newZ);
+}
+
+void SeinCharacter::SetVelocity(float newX, float newY, float newZ, bool setPrevious = true)
+{
+	auto pRb = this->GetRigidbody();
+	pRb->m_pInternalState->m_pInternal2->m_Velocity.Set(newX, newY, newZ);
+
+	// if(setPrevious)
+}
+
+
+Vector3 * SeinCharacter::GetRigidbodyPosition()
+{
+	return (Vector3*)&this->GetRigidbody()->m_pInternalState->m_pInternal2->m_Position;
+}
+
+Vector3 * SeinCharacter::GetRigidbodyPreviousPosition()
+{
+	return (Vector3*)&this->GetRigidbody()->m_pInternalState->m_pInternal2->m_PrevPosition;
+}
+
+Vector3 * SeinCharacter::GetRigidbodyVelocity()
+{
+	return (Vector3*)&this->GetRigidbody()->m_pInternalState->m_pInternal2->m_Velocity;
 }

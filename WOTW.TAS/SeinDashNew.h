@@ -1,15 +1,19 @@
 #pragma once
 #include "Vector2.h"
 #include "Vector3.h"
+#include <easyhook.h>
+#include "EverythingNeedsMe.h"
 #include "CharacterState.h"
 
 
 #define SEINDASHNEW_GETCANDASH_RVA 0x81A2F0
+#define SEINDASHNEW_ONPROCESSROOTMOTION_RVA 0x821AD0
 
+extern HOOK_TRACE_INFO SeinDashNew_OnProcessRootMotion_HookHandle;
 #pragma pack(push, 1)
 
 
-class SeinDashNew : CharacterState
+class SeinDashNew : public CharacterState
 {
 public:
 	// 0x00 - 0x7F = CharacterState members
@@ -243,4 +247,8 @@ private:
 #pragma pack(pop)
 
 typedef bool(__fastcall * fnSeinDashNew_CanDash)(SeinDashNew*);
+typedef void(__fastcall * fnSeinDashNew_OnProcessRootMotion)(SeinDashNew*, Vector3*);
+extern fnSeinDashNew_OnProcessRootMotion original_SeinDashNew_OnProcessRootMotion;
+
 extern fnSeinDashNew_CanDash SeinDashNew_CanDash;
+extern void __fastcall SeinDashNew_OnProcessRootMotion_Hook(SeinDashNew*, Vector3*);

@@ -148,13 +148,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Addresses.h" />
+    <ClInclude Include="ArrayWrapper.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="CharacterState.h" />
     <ClInclude Include="CharacterStateWrapper.h" />
+    <ClInclude Include="CharacterVisuals.h" />
+    <ClInclude Include="Cmd.h" />
     <ClInclude Include="CompoundButtonInput.h" />
     <ClInclude Include="Core_Input.h" />
     <ClInclude Include="EasyHookUtils.h" />
     <ClInclude Include="EverythingNeedsMe.h" />
+    <ClInclude Include="FixedRandom.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameplayCamera.h" />
     <ClInclude Include="GameSettings.h" />
@@ -163,9 +167,11 @@
     <ClInclude Include="InputRecord.h" />
     <ClInclude Include="InstantLoadScenesController.h" />
     <ClInclude Include="IsOnCollisionState.h" />
+    <ClInclude Include="MoonAnimator.h" />
     <ClInclude Include="PlaybackManager.h" />
     <ClInclude Include="PlayerInputTypeDefs.h" />
     <ClInclude Include="QualitySettings.h" />
+    <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="ScenesManager.h" />
     <ClInclude Include="SeinAbilities.h" />
     <ClInclude Include="SeinCharacter.h" />
@@ -174,6 +180,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UI_Cameras.h" />
+    <ClInclude Include="UnityAnimator.h" />
     <ClInclude Include="UnityEngine_Camera.h" />
     <ClInclude Include="UnityEngine_Input.h" />
     <ClInclude Include="UnityEngine_PhysicsSettings.h" />
@@ -185,15 +192,18 @@
     <ClInclude Include="WOTW_Characters.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Cmd.cpp" />
     <ClCompile Include="Core_Input.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="EasyHookUtils.cpp" />
     <ClCompile Include="EverythingNeedsMe.cpp" />
+    <ClCompile Include="FixedRandom.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameSettings.cpp" />
     <ClCompile Include="InstantLoadScenesController.cpp" />
     <ClCompile Include="PlaybackManager.cpp" />
     <ClCompile Include="QualitySettings.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="ScenesManager.cpp" />
     <ClCompile Include="SeinCharacter.cpp" />
     <ClCompile Include="SeinDashNew.cpp" />
@@ -205,6 +215,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="UI_Cameras.cpp" />
+    <ClCompile Include="UnityAnimator.cpp" />
     <ClCompile Include="UnityPlayer.cpp" />
     <ClCompile Include="WOTW.TAS.cpp" />
   </ItemGroup>

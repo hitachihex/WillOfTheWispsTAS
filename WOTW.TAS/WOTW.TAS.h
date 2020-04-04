@@ -13,7 +13,9 @@
 #include "GameController.h"
 #include "ScenesManager.h"
 #include "UnityPlayer.h"
+#include "FixedRandom.h"
 #include "EverythingNeedsMe.h"
+#include "Cmd.h"
 #include <Xinput.h>
 
 extern unsigned long g_ACLEntries[1];
@@ -23,7 +25,6 @@ extern unsigned long g_ACLEntries[1];
 
 #define ExclusiveHookWithCount(a,b) MakeHookExclusive(g_ACLEntries, a, b)
 #define ExclusiveHook(b) MakeHookExclusive(g_ACLEntries, 1, b)
-#define DoOnceBlock(s) static bool bOnce=false; if(!bOnce) {  bOnce=true; DebugOutput(s); }
 
 typedef unsigned long(WINAPI * oXInputGetState)(unsigned long, XINPUT_STATE*);
 extern oXInputGetState original_XInputGetState;

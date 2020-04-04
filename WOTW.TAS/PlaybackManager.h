@@ -17,6 +17,8 @@
 #include "InstantLoadScenesController.h"
 #include "ScenesManager.h"
 #include "UnityPlayer.h"
+#include "FixedRandom.h"
+#include "Cmd.h"
 
 
 typedef Vector3*(__fastcall * fnSeinCharacter_GetPosition)(Vector3*, SeinCharacter*);
@@ -117,6 +119,11 @@ private:
 	unsigned long m_InputIndex;
 
 	FILE * m_Fp;
+
+	/* Do we only need to handle this during dashes?
+	   Thinking, set Kinematic to true and do our thing.
+	*/
+	FILE * m_fpRigidbodyState;
 
 	unsigned long long m_RuntoLineNo;
 

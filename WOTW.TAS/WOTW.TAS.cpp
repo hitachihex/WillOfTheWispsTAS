@@ -61,14 +61,8 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	*(unsigned long long*)(&original_il2cpp_runtime_invoke) = *(unsigned long long*)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA);
 	*(unsigned long long*)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA) = (unsigned long long)il2cpp_runtime_invoke_Hook;
 
-	/*
-	unsigned long long SeinCharacter_getSein_VA = (Assembly_BaseAddr) + CHARACTERS_GETSEIN_NEWPATCH_RVA;
-	unsigned long long SeinCharacter_VAToInstruction = (SeinCharacter_getSein_VA + 0x86);
-	unsigned long long SeinCharacter_relativeCalc = *(unsigned long*)(SeinCharacter_VAToInstruction + 0x03);
-	unsigned long long ptr_SeinCharacter = (SeinCharacter_VAToInstruction + SeinCharacter_relativeCalc) + 0x07;
-
-	gqw_SeinCharacterPtr = (ptr_SeinCharacter);*/
-
+	gqw_CmdInstancePtr = ((Assembly_BaseAddr) + GAMEASSEMBLY_CMDINSTANCE_PTR_RVA);
+	gqw_FixedRandomInstancePtr = ((Assembly_BaseAddr) + FIXEDRANDOM_INSTANCEPTR_RVA);
 	gqw_SeinCharacterPtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr) + CHARACTERS_GETSEIN_NEWPATCH_RVA, 0x86));
 	gqw_GameSettingsInstance_Ptr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr) + PLAYERINPUT_GETWASKEYBOARDUSEDLAST_NEWPATCH_RVA, 0x65));
 	gqw_GameSettingsInstance_Ptr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr) + UNKNOWN_FUNCTION_OFFSETFORQUALITYSETTINGS_NEWPATCH_RVA, 0x2DF));
@@ -80,8 +74,12 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	g_pSeinCharacter = GetSeinCharacter();
 
 	// Because we have no other way to set it.
+	*(unsigned long long*)(&Rigidbody_GetIsKinematic) = (UnityPlayer_BaseAddr) + UNITYPLAYER_UNITYENGINE_RIGIDBODY_GETISKINEMATIC_RVA;
+	*(unsigned long long*)(&Rigidbody_SetIsKinematic) = (UnityPlayer_BaseAddr) + UNITYPLAYER_RIGIDBODY_SETISKINEMATIC_RVA;
+	*(unsigned long long*)(&UnityEngine_Animator_GetUpdateMode) = (UnityPlayer_BaseAddr) + UNITYPLAYER_UNITYENGINE_ANIMATOR_GETUPDATEMODE_RVA;
 	*(unsigned long long*)(&SeinDashNew_CanDash) = (Assembly_BaseAddr) + SEINDASHNEW_GETCANDASH_RVA;
 	*(unsigned long long*)(&SeinWallJump_CanPerformWallJump) = (Assembly_BaseAddr) + SEINWALLJUMP_CANPERFORMWALLJUMP_RVA;
+	*(unsigned long long*)(&original_SeinDashNew_OnProcessRootMotion) = (Assembly_BaseAddr)+SEINDASHNEW_ONPROCESSROOTMOTION_RVA;
 	*(unsigned long long*)(&original_WOTW_UnityEngine_PlayerLoopInternal) = (UnityPlayer_BaseAddr) + UNITYENGINE_PLAYERLOOPINTERNAL_NEWPATCH_RVA;
 	*(unsigned long long*)(&original_UnityEngine_GetMousePositonInjected) = (UnityPlayer_BaseAddr)+ UNITYENGINE_GETMOUSEPOSITION_INJECTED_RVA;
 	*(unsigned long long*)(&ScreenToViewportPoint_Injected) = (UnityPlayer_BaseAddr) + UNITYENGINE_SCREENTOVIEWPORTPOINTINJECTED_NEWPATCH_RVA;
@@ -127,10 +125,29 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 		ExclusiveHook(&WOTW_UnityEngine_GetDeltaTime_HookHandle);
 	}
 
+	
+	result = AddHook((void*)(Assembly_BaseAddr + SEINDASHNEW_ONPROCESSROOTMOTION_RVA), SeinDashNew_OnProcessRootMotion_Hook, NULL, &SeinDashNew_OnProcessRootMotion_HookHandle);
+
+	if (FAILED(result))
+	{
+		auto err = RtlGetLastErrorString();
+		DebugOutputW(L"Failed to hook SeinDashNew_OnProcessRootMotion, err=%s", err);
+	}
+	else
+	{
+		DebugOutput("SeinDashNew_OnProcessRootMotion_Hook installed.");
+		ExclusiveHook(&SeinDashNew_OnProcessRootMotion_HookHandle);
+	}
+
+
+    //"UnityEngine.Playables.PlayableGraph::ConnectInternal_Injected(UnityEngine.Playables.PlayableGraph&,UnityEngine.Playables.PlayableHandle&,System.Int32,UnityEngine.Playables.PlayableHandle&,System.Int32)"
 	g_pPlaybackManager = new PlaybackManager("Ori.rec");
 	g_pPlaybackManager->SetFrameRate(60, true);
 	//*gp_qwUnityEngineTargetFrameRatePtr = g_pPlaybackManager->CurrentFrameRate;
 	DumpPointersForExternalOSD();
+
+	// It IS AnimatePhysics.. but I doubt the player is Kinematic during the dash.
+	//DebugOutput("UnityEngine::Animator.UpdateMode = %u", UnityEngine_Animator_GetUpdateMode(g_pSeinCharacter->pPlatformBehaviour->m_pVisuals->m_pAnimator->m_pUnityAnimator));
 }
 
 
@@ -148,6 +165,7 @@ void * __fastcall il2cpp_runtime_invoke_Hook(MethodInfo* pMethodInfo, void* obj,
 {
 	DoOnceBlock("il2cpp_runtime_invoke_Hook, !bOnce");
 	static bool bHookedPlayerInputFixedUpdate = false;
+	//static bool bHookedSeinDashNew_OnProcessRootMotion = false;
 
 	if (!bHookedPlayerInputFixedUpdate)
 	{
@@ -159,11 +177,12 @@ void * __fastcall il2cpp_runtime_invoke_Hook(MethodInfo* pMethodInfo, void* obj,
 			*(unsigned long long*)(&original_PlayerInputFixedUpdate) = pMethodInfo->methodAddr;
 			PlayerInput_FixedUpdate_VA = pMethodInfo->methodAddr;
 			pMethodInfo->methodAddr = (unsigned long long)PlayerInput_FixedUpdate_Hook;
-			DebugOutput("Replaced pMethodInfo->methodAddr with PlayerInput_FixedUpdate_Hook.");
+			DebugOutput("Replaced PlayerInput::FixedUpdate with hook.");
 			bHookedPlayerInputFixedUpdate = true;
 	
 		}
 	}
+
 
 	return original_il2cpp_runtime_invoke(pMethodInfo, obj, params, exc);
 }
