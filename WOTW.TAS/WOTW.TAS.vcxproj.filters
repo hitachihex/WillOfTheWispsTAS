@@ -144,6 +144,24 @@
     <ClInclude Include="Cmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SeinDoubleJump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SeinLogicCycle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SeinChargeJump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SeinJump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RestrictAbilityController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AbilityType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -207,6 +225,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RestrictAbilityController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

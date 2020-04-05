@@ -5,6 +5,9 @@
 #include "SeinAbilities.h"
 #include "IsOnCollisionState.h"
 #include "CharacterVisuals.h"
+#include "SeinLogicCycle.h"
+//#include "RestrictAbilityController.h"
+#include "EverythingNeedsMe.h"
 #pragma pack(push, 1)
 
 
@@ -108,7 +111,7 @@ public:
 	unsigned char uc_Unk0000_0017[0x18];
 
 	// 0x18 - 0x1F
-	unsigned long long SeinLogicCycle_LogicCycle;
+	SeinLogicCycle * m_pLogicCycle;
 
 	// 0x20 - 0x27
 	SeinAbilities * m_pAbilities;
@@ -120,23 +123,119 @@ public:
 	PlatformBehaviour * pPlatformBehaviour;
 
 	
-	// ----- methods
-	bool IsOnWall();
+	// ----- inline methods
+	inline bool IsOnWall()
+	{
+		float LocalSpeedX = this->pPlatformBehaviour->pPlatformMovement->m_LocalSpeed.x;
 
-	bool IsFalling();
+		if (LocalSpeedX < 0.0f)
+			return this->pPlatformBehaviour->pPlatformMovement->m_pWallLeft->IsOn;
 
-	Rigidbody * GetRigidbody();
+		return this->pPlatformBehaviour->pPlatformMovement->m_pWallRight->IsOn;
 
-	Vector3 * GetRigidbodyPreviousPosition();
+	}
 
-	Vector3 * GetRigidbodyPosition();
+	inline bool IsFalling()
+	{
+		CharacterPlatformMovement * pPlatformMovement = this->pPlatformBehaviour->pPlatformMovement;
 
-	Vector3 * GetRigidbodyVelocity();
+		// that's interesting, does the game *actually* think we are falling when we're upslashing?
+		// Maybe we should check for Rigidbody velocity too, but the game doesn't.
+		return !pPlatformMovement->m_pOnGround->IsOn && pPlatformMovement->m_LocalSpeed.y < 0.0001f;
 
-	void SetRigidbodyPosition(float, float, float, bool);
+	}
 
-	void SetVelocity(float, float, float, bool);
+	inline Rigidbody * GetRigidbody()
+	{
+		return this->pPlatformBehaviour->pPlatformMovement->m_pRigidbody;
+	}
 
+	inline void SetRigidbodyPosition(float newX, float newY, float newZ, bool setPrevious = true)
+	{
+		auto pRb = this->GetRigidbody();
+		pRb->m_pInternalState->m_pInternal2->m_Position.Set(newX, newY, newZ);
+		if (setPrevious)
+			pRb->m_pInternalState->m_pInternal2->m_PrevPosition.Set(newX, newY, newZ);
+	}
+
+	inline void SetVelocity(float newX, float newY, float newZ, bool setPrevious = true)
+	{
+		auto pRb = this->GetRigidbody();
+		pRb->m_pInternalState->m_pInternal2->m_Velocity.Set(newX, newY, newZ);
+
+		// if(setPrevious)
+	}
+
+	inline Vector3 * GetRigidbodyPosition()
+	{
+		return (Vector3*)&this->GetRigidbody()->m_pInternalState->m_pInternal2->m_Position;
+	}
+
+	inline Vector3 * GetRigidbodyPreviousPosition()
+	{
+		return (Vector3*)&this->GetRigidbody()->m_pInternalState->m_pInternal2->m_PrevPosition;
+	}
+
+	inline Vector3 * GetRigidbodyVelocity()
+	{
+		return (Vector3*)&this->GetRigidbody()->m_pInternalState->m_pInternal2->m_Velocity;
+	}
+
+	inline bool CanJump()
+	{
+		auto statePtr = this->m_pAbilities->JumpWrapper->State;
+
+		if (!statePtr)
+			return false;
+
+		return ((bool(__fastcall*)(SeinJump*))(Assembly_BaseAddr + GAMEASSEMBLY_SEINJUMP_CANJUMP_RVA))(this->m_pAbilities->JumpWrapper->State);
+	}
+
+	inline bool CanDoubleJump()
+	{
+		auto statePtr = this->m_pAbilities->DoubleJumpWrapper->State;
+
+		if (!statePtr)
+			return false;
+
+		if (!statePtr->m_isActive)
+			return false;
+
+		return this->IsInAir() && statePtr->m_numberOfJumpsAvailable > 0 && statePtr->m_remainingLockTime <= 0.0f;
+	}
+
+	inline bool IsInAir()
+	{
+
+		if (0.0001f > this->pPlatformBehaviour->pPlatformMovement->m_LocalSpeed.y)
+			return !this->pPlatformBehaviour->pPlatformMovement->m_pOnGround->IsOn;
+
+		return true;
+	}
+
+	inline bool CanChargeJump()
+	{
+		auto statePtr = this->m_pAbilities->ChargeJumpWrapper->State;
+
+		if (!statePtr)
+			return false;
+
+		// Check the zones.
+		return statePtr->WasGroundedSinceLastExecution && !RestrictAbilityController_IsRestricted(AbilityType::ChargeJumpAbility, SeinAbilityRestrictZoneMask::ChargeJumpZoneMask);
+
+		//return ((bool(__fastcall*)(SeinChargeJump*))(Assembly_BaseAddr + GAMEASSEMBLY_SEINCHARGEJUMP_CANCHARGE_RVA))(this->m_pAbilities->ChargeJumpWrapper->State);
+	}
+
+	inline bool CanStartChargingChargeJump()
+	{
+		auto statePtr = this->m_pAbilities->ChargeJumpWrapper->State;
+		
+		if (!statePtr)
+			return false;
+
+		return ((bool(__fastcall*)(SeinChargeJump*))(Assembly_BaseAddr + GAMEASSEMBLY_SEINCHARGEJUMP_CANSTARTCHARGING_RVA))(this->m_pAbilities->ChargeJumpWrapper->State);
+
+	}
 };
 #pragma pack(pop)
 

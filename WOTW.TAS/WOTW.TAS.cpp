@@ -74,6 +74,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	g_pSeinCharacter = GetSeinCharacter();
 
 	// Because we have no other way to set it.
+	*(unsigned long long*)(&RestrictAbilityController_IsRestricted) = (Assembly_BaseAddr) + GAMEASSEMBLY_RESTRICTABILITYCONTROLLER_ISABILITYRESTRICTED_RVA;
 	*(unsigned long long*)(&Rigidbody_GetIsKinematic) = (UnityPlayer_BaseAddr) + UNITYPLAYER_UNITYENGINE_RIGIDBODY_GETISKINEMATIC_RVA;
 	*(unsigned long long*)(&Rigidbody_SetIsKinematic) = (UnityPlayer_BaseAddr) + UNITYPLAYER_RIGIDBODY_SETISKINEMATIC_RVA;
 	*(unsigned long long*)(&UnityEngine_Animator_GetUpdateMode) = (UnityPlayer_BaseAddr) + UNITYPLAYER_UNITYENGINE_ANIMATOR_GETUPDATEMODE_RVA;
@@ -158,7 +159,7 @@ float __fastcall WOTW_UnityEngine_GetDeltaTime_Hook()
 
 	// 1/63 = 0.0158730f
 	// 1/60 = 0.0166667f
-	return SchixtySeven;
+	return g_fCurrentDeltaTimeSpoof;
 }
 
 void * __fastcall il2cpp_runtime_invoke_Hook(MethodInfo* pMethodInfo, void* obj, void ** params, void ** exc)
@@ -219,6 +220,11 @@ void __fastcall WOTW_UnityEngine_PlayerLoopInternal_Hook()
 	{
 		// VK_OEM_4 = '['
 		// VK_OEM_6 = ']'
+
+		if (GetAsyncKeyState(VK_NUMPAD9) & 1)
+		{
+			// Read in for g_fDeltaTimeSpoof
+		}
 
 		if (GetAsyncKeyState(VK_OEM_4) & 1)
 		{

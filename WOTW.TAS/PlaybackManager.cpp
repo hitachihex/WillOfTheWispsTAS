@@ -474,8 +474,6 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		pCmd->Grab->Update(m_pCurrentInput->IsGlide());
 		pCmd->Glide->Update(m_pCurrentInput->IsGlide());
 
-		Vector3 tempOut;
-		Vector3 tempOut2;
 		auto pSeinChar = GetSeinCharacter();
 
 		Vector3 * charPos = pSeinChar->GetRigidbodyPosition();
@@ -490,16 +488,32 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pCeiling->IsOn)
 			CharacterStateInfo += "OnCeiling, ";
 
+		if (pSeinChar->IsOnWall())
+			CharacterStateInfo += "OnWall, ";
+
 		if (pSeinChar->IsFalling())
 			CharacterStateInfo += "Falling, ";
 
+		if (pSeinChar->CanJump())
+			CharacterStateInfo += "Jump, ";
+
 		if(pSeinChar->m_pAbilities->DashNewWrapper->State != nullptr)
 			if (SeinDashNew_CanDash(pSeinChar->m_pAbilities->DashNewWrapper->State))
-				CharacterStateInfo += "CanDash";
+				CharacterStateInfo += "CanDash, ";
 
 		if(pSeinChar->m_pAbilities->WallJumpWrapper->State != nullptr)
 			if (SeinWallJump_CanPerformWallJump(pSeinChar->m_pAbilities->WallJumpWrapper->State))
 				CharacterStateInfo += "CanWallJump, ";
+
+		if (pSeinChar->IsInAir())
+			CharacterStateInfo += "InAir, ";
+
+		if (pSeinChar->CanDoubleJump())
+			CharacterStateInfo += "CanDJump, ";
+
+		if (pSeinChar->CanChargeJump())
+			CharacterStateInfo += "CanLaunch, ";
+
 
 		// Done / Frames
 		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nRNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharInfo: %s", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
@@ -510,20 +524,15 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		{
 			/*
                TODO: See if setting kinematicism and then disabling it afterwards
-		             can make this more consistent.
+		             can make this better.
             */
-			tempOut.x = m_pCurrentInput->xPos;
-			tempOut.y = m_pCurrentInput->yPos;
 
 			// thought maybe this would help pos sets, but nope, they're still fucked
-			pSeinChar->pPlatformBehaviour->pPlatformMovement->m_PreviousPosition.x = tempOut.x;
-			pSeinChar->pPlatformBehaviour->pPlatformMovement->m_PreviousPosition.y = tempOut.y;
+			pSeinChar->pPlatformBehaviour->pPlatformMovement->m_PreviousPosition.x = m_pCurrentInput->xPos;
+			pSeinChar->pPlatformBehaviour->pPlatformMovement->m_PreviousPosition.y = m_pCurrentInput->yPos;
+			pSeinChar->pPlatformBehaviour->pPlatformMovement->m_PreviousPosition.z = charPos->z;
 
-			// whatever the heck it was, before
-			tempOut.z = charPos->z;
-
-			// TODO: Set to Rigidbody pointer directly
-			SeinCharacter_SetPosition(GetSeinCharacter(), &tempOut);
+			pSeinChar->SetRigidbodyPosition(m_pCurrentInput->xPos, m_pCurrentInput->yPos, charPos->z, true);
 		}
 
 		if (m_pCurrentInput->HasKinematicSetting)
@@ -539,20 +548,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 
 inline void PlaybackManager::PlaybackFormatAll()
 {
-	Vector3 tempOut;
-	Vector3 tempOut2;
-	auto pSeinChar = GetSeinCharacter();
-	Vector3 * charPos = SeinCharacter_GetPosition(&tempOut, pSeinChar);
-
-	// I think there's "AdditiveSpeed" now, maybe you should just look at that,
-	// instead of calling this function each framestep, or etc.
-	//&pSeinChar->pPlatformBehaviour->pPlatformMovement->m_LocalSpeed;
-	Vector3 * pCharSpeed = CharPlatformMovement_GetRigidbodyVelocity(&tempOut2, pSeinChar->pPlatformBehaviour->pPlatformMovement);
-
-	// Done / Frames
-	sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
-		this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame, this->m_nTotalFrameCount, g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY,
-		charPos->x, charPos->y, pCharSpeed->x, pCharSpeed->y);
+	return;
 }
 
 void PlaybackManager::FormatWithoutPlayback()
@@ -585,12 +581,15 @@ void PlaybackManager::FormatWithoutPlayback()
 	if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pCeiling->IsOn)
 		CharacterStateInfo += "OnCeiling, ";
 
-	if (pSeinChar->IsFalling())
-		CharacterStateInfo += "Falling, ";
-
 	if (pSeinChar->IsOnWall())
 		CharacterStateInfo += "OnWall, ";
+
+	if (pSeinChar->IsFalling())
+		CharacterStateInfo += "Falling, ";
 	 
+	if (pSeinChar->CanJump())
+		CharacterStateInfo += "Jump, ";
+
 	if(pSeinChar->m_pAbilities->DashNewWrapper->State != nullptr)
 		if (SeinDashNew_CanDash(pSeinChar->m_pAbilities->DashNewWrapper->State))
 			CharacterStateInfo += "CanDash, ";
@@ -598,6 +597,16 @@ void PlaybackManager::FormatWithoutPlayback()
 	if(pSeinChar->m_pAbilities->WallJumpWrapper->State != nullptr)
 		if (SeinWallJump_CanPerformWallJump(pSeinChar->m_pAbilities->WallJumpWrapper->State))
 			CharacterStateInfo += "CanWallJump, ";
+
+	if (pSeinChar->IsInAir())
+		CharacterStateInfo += "InAir, ";
+
+	if (pSeinChar->CanDoubleJump())
+		CharacterStateInfo += "CanDJump, ";
+
+	if (pSeinChar->CanChargeJump())
+		CharacterStateInfo += "CanLaunch, ";
+
 
 	sprintf(this->m_szCurrentManagerState, "RNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharStateInfo: %s",
 		GetFixedRandomInstance()->FixedUpdateIndex,
