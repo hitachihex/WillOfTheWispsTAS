@@ -56,6 +56,10 @@ Accepted commands are: <br />
     Grab <br />
     Angle - for setting an angle to aim your launch, bash, etc in degrees. <br /> 
     Start <br />
+    Inv or Inventory <br />
+    Select or Map <br />
+    MenuLeft <br />
+    MenuRight <br />
     Pause <br />
     Ability1 <br />
     Ability2 <br />
