@@ -2,8 +2,9 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include <easyhook.h>
-#include "EverythingNeedsMe.h"
 #include "CharacterState.h"
+#include "MoonAnimator.h"
+#include "EverythingNeedsMe.h"
 
 
 #define SEINDASHNEW_GETCANDASH_RVA 0x81A2F0
@@ -181,7 +182,7 @@ public:
 	unsigned long long MoonTimeline_m_currentTimeline;
 
 	// 0x120 - 0x127
-	unsigned long long MoonAnimator_m_seinAnimator;
+	MoonAnimator * m_pSeinAnimator;
 
 	// 0x128 - 0x12F
 	Vector2 m_previousPosition;

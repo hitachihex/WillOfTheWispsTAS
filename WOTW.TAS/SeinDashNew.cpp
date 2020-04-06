@@ -49,6 +49,11 @@ void __fastcall SeinDashNew_OnProcessRootMotion_Hook(SeinDashNew* pThis, Vector3
 {
 	DoOnceBlock("SeinDashNew_OnProcessRootMotion_Hook, !bOnce");
 
+	/* And nope, only works when something does not implement OnAnimatorMove (Moon does.)
+	if (pThis->m_isDashing)
+	{
+		pThis->m_pSeinAnimator->m_pUnityAnimator->m_pInternal->m_bApplyRootMotion = false;
+	}*/
 	/* No.
 	if (pThis->m_isDashing)
 	{

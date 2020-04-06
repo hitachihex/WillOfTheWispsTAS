@@ -73,7 +73,15 @@ enum EInputState
 
 	SLOWDOWN             = 1 << 17,
 
-	ENABLE_KINEMATICS    = 1 << 18
+	ENABLE_KINEMATICS    = 1 << 18,
+
+	OPENMAP              = 1 << 19,
+
+	OPENINVENTORY        = 1 << 20,
+
+	PAGELEFT             = 1 << 21,
+
+	PAGERIGHT            = 1 << 22
 
 };
 
@@ -173,6 +181,18 @@ public:
 
 		if (this->IsUnpause())
 			result += ",Unpause";
+
+		if (this->IsSelect())
+			result + ",OpenMapInventory";
+
+		if (this->IsMenuLeft())
+			result += ",MenuLeft";
+
+		if (this->IsMenuRight())
+			result += ",MenuRight";
+
+		if (this->IsOpenInventory())
+			result += ",OpenInventory";
 		return result;
 	}
 
@@ -337,6 +357,21 @@ public:
 	bool IsSelect()
 	{
 		return this->HasFlag(this->m_InputState, EInputState::SELECT);
+	}
+
+	bool IsOpenInventory()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::OPENINVENTORY);
+	}
+
+	bool IsMenuLeft()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::PAGELEFT);
+	}
+
+	bool IsMenuRight()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::PAGERIGHT);
 	}
 
 	bool IsEmpty()
@@ -522,6 +557,26 @@ public:
 					bWasValidToken = true;
 					continue;
 				}
+
+				else if (token == "INV" || token == "INVENTORY")
+				{
+					TempState |= EInputState::OPENINVENTORY;
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "MENURIGHT")
+				{
+					TempState |= EInputState::PAGERIGHT;
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "MENULEFT")
+				{
+					TempState |= EInputState::PAGELEFT;
+					bWasValidToken = true;
+					continue;
+				}
+
 				else if (token == "BASH")
 				{
 					TempState |= EInputState::BASH;

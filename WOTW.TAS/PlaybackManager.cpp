@@ -322,6 +322,12 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 	if (wasFramestepped)
 		memset(&this->m_szCurrentManagerState[0], 0, 800);
 
+
+	// Oof ouch owie my bones
+	auto pSeinChar = GetSeinCharacter();
+	if (pSeinChar == nullptr)
+		return;
+
 	bool isLoading = this->IsGameLoading();
 
 	if (isLoading)
@@ -461,6 +467,11 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 
 		auto pCmd = GetCmdInstance();
 
+		pCmd->OpenInventory->Update(m_pCurrentInput->IsOpenInventory());
+		pCmd->OpenMapShardsInventory->Update(m_pCurrentInput->IsSelect());
+		//pCmd->OpenAreaMap->Update(m_pCurrentInput->IsSelect());
+		pCmd->MenuPageLeft->Update(m_pCurrentInput->IsMenuLeft());
+		pCmd->MenuPageRight->Update(m_pCurrentInput->IsMenuRight());
 		pCmd->MenuSelect->Update(m_pCurrentInput->IsJump());
 		pCmd->OpenPauseScreen->Update(m_pCurrentInput->IsStart());
 		pCmd->Jump->Update(m_pCurrentInput->IsJump());
@@ -474,11 +485,16 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		pCmd->Grab->Update(m_pCurrentInput->IsGlide());
 		pCmd->Glide->Update(m_pCurrentInput->IsGlide());
 
-		auto pSeinChar = GetSeinCharacter();
 
 		Vector3 * charPos = pSeinChar->GetRigidbodyPosition();
 		Vector3 * pCharSpeed = pSeinChar->GetRigidbodyVelocity();
 	
+		if (charPos == nullptr)
+			return;
+
+		if (pCharSpeed == nullptr)
+			return;
+
 		std::string CharacterStateInfo = "";
 
 		if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pOnGround->IsOn)

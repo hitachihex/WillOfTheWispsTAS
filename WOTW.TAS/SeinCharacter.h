@@ -147,12 +147,22 @@ public:
 
 	inline Rigidbody * GetRigidbody()
 	{
+		if (this->pPlatformBehaviour == nullptr)
+			return nullptr;
+
+		if (this->pPlatformBehaviour->pPlatformMovement == nullptr)
+			return nullptr;
+
 		return this->pPlatformBehaviour->pPlatformMovement->m_pRigidbody;
 	}
 
 	inline void SetRigidbodyPosition(float newX, float newY, float newZ, bool setPrevious = true)
 	{
 		auto pRb = this->GetRigidbody();
+
+		if (pRb == nullptr)
+			return;
+
 		pRb->m_pInternalState->m_pInternal2->m_Position.Set(newX, newY, newZ);
 		if (setPrevious)
 			pRb->m_pInternalState->m_pInternal2->m_PrevPosition.Set(newX, newY, newZ);
@@ -161,6 +171,10 @@ public:
 	inline void SetVelocity(float newX, float newY, float newZ, bool setPrevious = true)
 	{
 		auto pRb = this->GetRigidbody();
+
+		if (pRb == nullptr)
+			return;
+
 		pRb->m_pInternalState->m_pInternal2->m_Velocity.Set(newX, newY, newZ);
 
 		// if(setPrevious)
@@ -168,17 +182,29 @@ public:
 
 	inline Vector3 * GetRigidbodyPosition()
 	{
-		return (Vector3*)&this->GetRigidbody()->m_pInternalState->m_pInternal2->m_Position;
+		auto pRb = this->GetRigidbody();
+		if (pRb == nullptr)
+			return nullptr;
+
+		return (Vector3*)&pRb->m_pInternalState->m_pInternal2->m_Position;
 	}
 
 	inline Vector3 * GetRigidbodyPreviousPosition()
 	{
-		return (Vector3*)&this->GetRigidbody()->m_pInternalState->m_pInternal2->m_PrevPosition;
+		auto pRb = this->GetRigidbody();
+		if (pRb == nullptr)
+			return nullptr;
+
+		return (Vector3*)&pRb->m_pInternalState->m_pInternal2->m_PrevPosition;
 	}
 
 	inline Vector3 * GetRigidbodyVelocity()
 	{
-		return (Vector3*)&this->GetRigidbody()->m_pInternalState->m_pInternal2->m_Velocity;
+		auto pRb = this->GetRigidbody();
+		if (pRb == nullptr)
+			return nullptr;
+
+		return (Vector3*)&pRb->m_pInternalState->m_pInternal2->m_Velocity;
 	}
 
 	inline bool CanJump()
