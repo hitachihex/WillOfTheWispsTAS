@@ -1,6 +1,6 @@
 #pragma once
 #include "CharacterState.h"
-#define SEINWALLJUMP_CANPERFORMWALLJUMP_RVA 0xC27230
+#define SEINWALLJUMP_CANPERFORMWALLJUMP_RVA 0xC29C00
 
 #pragma pack(push, 1)
 

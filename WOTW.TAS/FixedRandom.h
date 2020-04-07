@@ -3,8 +3,9 @@
 #include "Vector2.h"
 #include "Vector3.h"
 
-//.data:00000001843FDB58 gameassembly.dll:$43FDB58 #0
-#define FIXEDRANDOM_INSTANCEPTR_RVA 0x43FDB58
+//.data:00007FFFD92317D8 gameassembly.dll:$44017D8 #0
+//#define FIXEDRANDOM_INSTANCEPTR_RVA 0x43FDB58
+#define FIXEDRANDOM_INSTANCEPTR_RVA 0x44017D8
 #pragma pack(push, 1)
 
 class FixedRandom

@@ -1,7 +1,7 @@
 #pragma once
 #include "CharacterState.h"
 
-#define GAMEASSEMBLY_SEINJUMP_CANJUMP_RVA 0x7F0750
+#define GAMEASSEMBLY_SEINJUMP_CANJUMP_RVA 0x7F2F60
 
 #pragma pack(push, 1)
 

@@ -53,7 +53,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 
 
 	// Patch GameController::OnApplicationFocus
-	ApplyPatch((Assembly_BaseAddr)+0x52191B, "\xFF\xC5\x90");
+	ApplyPatch((Assembly_BaseAddr)+0x49EC5B, "\xFF\xC5\x90");
 
 	DWORD dwOldProt;
 	VirtualProtect((LPVOID)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA), 8, PAGE_EXECUTE_READWRITE, &dwOldProt);
@@ -93,7 +93,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	*(unsigned long long*)(&CharPlatformMovement_GetRigidbodyVelocity) = (Assembly_BaseAddr) + CHARPLATFORMMOVEMENT_GETRIGIDBODYVELOCITY_NEWPATCH_RVA;
 	*(unsigned long long*)(&ScenesManager_IsPositionInsideSceneStillLoading) = (Assembly_BaseAddr) + SCENESMANAGER_ISPOSITIONINSIDESCENESTILLLOADING_NEWPATCH_RVA;
 
-	*(unsigned long long*)(&orig_PlayerInput_RefreshControls) = (Assembly_BaseAddr) + 0x12F8400;
+	*(unsigned long long*)(&orig_PlayerInput_RefreshControls) = (Assembly_BaseAddr) + 0x12FC6B0;
 
 	// Patch whatever keeps trying to set the Max Timestep
 	ApplyNops((Assembly_BaseAddr)+GAMEASSEMBLY_MAXTIMESTEP_SETCALL_NEWPATCH_RVA, 0x02);
@@ -127,6 +127,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	}
 
 	
+	/*
 	result = AddHook((void*)(Assembly_BaseAddr + SEINDASHNEW_ONPROCESSROOTMOTION_RVA), SeinDashNew_OnProcessRootMotion_Hook, NULL, &SeinDashNew_OnProcessRootMotion_HookHandle);
 
 	if (FAILED(result))
@@ -138,7 +139,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	{
 		DebugOutput("SeinDashNew_OnProcessRootMotion_Hook installed.");
 		ExclusiveHook(&SeinDashNew_OnProcessRootMotion_HookHandle);
-	}
+	}*/
 
 
     //"UnityEngine.Playables.PlayableGraph::ConnectInternal_Injected(UnityEngine.Playables.PlayableGraph&,UnityEngine.Playables.PlayableHandle&,System.Int32,UnityEngine.Playables.PlayableHandle&,System.Int32)"
@@ -293,6 +294,7 @@ void __fastcall PlayerInput_FixedUpdate_Hook2(unsigned long long __rcx)
 
 	if (!bGotCommandProcessors)
 	{
+		/*
 		g_pButtonA = original_InputButtonProcessor_GetButton(EButton::ButtonA);
 		g_pButtonB = original_InputButtonProcessor_GetButton(EButton::ButtonB);
 		g_pButtonX = original_InputButtonProcessor_GetButton(EButton::ButtonX);
@@ -313,7 +315,7 @@ void __fastcall PlayerInput_FixedUpdate_Hook2(unsigned long long __rcx)
 		g_pAbility1 = original_InputButtonProcessor_GetCommand(ECommand::Ability1);//original_InputButtonProcessor_GetButton(EButton::ButtonX);
 		g_pAbility2 = original_InputButtonProcessor_GetCommand(ECommand::Ability2);//original_InputButtonProcessor_GetButton(EButton::ButtonY);
 		g_pAbility3 = original_InputButtonProcessor_GetCommand(ECommand::Ability3);//original_InputButtonProcessor_GetButton(EButton::ButtonB);
-
+		*/
 		bGotCommandProcessors = true;
 	}
 

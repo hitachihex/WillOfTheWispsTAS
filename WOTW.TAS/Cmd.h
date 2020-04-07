@@ -2,8 +2,8 @@
 
 #include "InputButtonProcessorTypedefs.h"
 
-//.data:000000000900B578 gameassembly.dll:$43DB578 #0
-#define GAMEASSEMBLY_CMDINSTANCE_PTR_RVA 0x43DB578
+//.data:00007FFFD920F260 gameassembly.dll:$43DF260 #0
+#define GAMEASSEMBLY_CMDINSTANCE_PTR_RVA 0x43DF260
 #pragma pack(push, 1)
 
 class Cmd
