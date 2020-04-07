@@ -54,7 +54,7 @@ Accepted commands are: <br />
     Wheel <br />
     Glide <br />
     Grab <br />
-    Angle - for setting an angle to aim your launch, bash, etc in degrees. <br /> 
+    Angle - for setting an angle to aim your launch, bash, etc in degrees e.g Angle, 90<br /> 
     Start <br />
     Inv or Inventory <br />
     Select or Map <br />
