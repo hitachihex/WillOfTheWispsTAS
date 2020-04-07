@@ -48,7 +48,7 @@ Accepted commands are: <br />
     Bash <br />
     Grapple <br />
     AbilityWheel <br />
-    Rng, Random, Seed - for setting the random seed of the game e.g Seed, 80085
+    Rng, Random, Seed - for setting the random seed of the game e.g Seed, 80085 <br />
     Pos  - for setting oris position, in form of Pos,xpos,ypos <br /> 
     Mouse - set mouse pos e.g Mouse, xpos, ypos -- values clamped to viewport from top left of game window as 0.0, 0.0 <br />
     Wheel <br />
