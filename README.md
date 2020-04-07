@@ -1,7 +1,7 @@
 # WillOfTheWispsTAS
 TAS tools for WOTW.
 
-# NOTE: ONLY WORKS ON CURRENT BETA BRANCH, NOT RELEASE PATCH.
+# NOTE: ONLY WORKS ON CURRENT PATCH.
 
 To use the tool, run WOTW.TAS.Injector.exe after running the game executable, make sure WOTW.TAS.dll is in the same directory as the injector executable. You will need to run the injector (and possibly the game) as administrator.
 
