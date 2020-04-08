@@ -513,13 +513,18 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		if (pSeinChar->CanJump())
 			CharacterStateInfo += "Jump, ";
 
-		if(pSeinChar->m_pAbilities->DashNewWrapper->State != nullptr)
+		//ObjectAs(pSeinChar->)
+		ISWRAPPERSTATEVALID(pSeinChar, DashNewWrapper)
+		{
 			if (SeinDashNew_CanDash(pSeinChar->m_pAbilities->DashNewWrapper->State))
 				CharacterStateInfo += "CanDash, ";
+		}
 
-		if(pSeinChar->m_pAbilities->WallJumpWrapper->State != nullptr)
-			if (SeinWallJump_CanPerformWallJump(pSeinChar->m_pAbilities->WallJumpWrapper->State))
+		ISWRAPPERSTATEVALID(pSeinChar, WallJumpWrapper)
+		{
+			if(EXW4M(pSeinChar, WallJumpWrapper)->CanPerformWallJump())
 				CharacterStateInfo += "CanWallJump, ";
+		}
 
 		if (pSeinChar->IsInAir())
 			CharacterStateInfo += "InAir, ";

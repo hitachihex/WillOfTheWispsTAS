@@ -3,6 +3,7 @@
 
 #include "CharacterStateWrapper.h"
 #include "SeinWallJump.h"
+#include "SeinWallSlide.h"
 #include "SeinDashNew.h"
 #include "SeinJump.h"
 #include "SeinDoubleJump.h"
@@ -36,8 +37,24 @@ public:
 	// 0x30 - 0x37
 	CharacterStateWrapper<SeinChargeJump*> * ChargeJumpWrapper;
 
-	// 0x38 - 0x97
-	unsigned char uc_Unk0038_0097[0x98 - 0x38];
+
+	// 0x38 - 0x6F
+	unsigned char uc_Unk0038_0097[0x70 - 0x38];
+
+	// 0x70 - 0x77
+	CharacterStateWrapper<SeinWallSlide*> * WallSlideWrapper;
+
+	// 0x78 - 0x7F
+	unsigned long long GrabRopeWrapper;
+
+	// 0x80 - 0x87
+	unsigned long long EdgeClamberWrapper;
+
+	// 0x88 - 0x8F
+	unsigned long long SwimmingWrapper;
+
+	// 0x90 - 0x97
+	unsigned long long DiggingWrapper;
 
 	// 0x98 - 0x9F
 	CharacterStateWrapper<SeinDashNew*> * DashNewWrapper;

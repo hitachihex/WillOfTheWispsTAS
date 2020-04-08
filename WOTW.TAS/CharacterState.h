@@ -1,13 +1,22 @@
 #pragma once
+#include "GuidOwner.h"
+
+//if(pSeinChar->m_pAbilities->WallJumpWrapper->State != nullptr)
+#define ISWRAPPERSTATEVALID(p, theClass) if(p->m_pAbilities->##theClass##->State != nullptr)
+#define EXW4M(p,theClass) p->m_pAbilities->##theClass##->State
 #pragma pack(push,1)
 
 class SeinCharacter;
 
-class CharacterState
+class CharacterState : public GuidOwner
 {
 public:
-	// 0x0000 - 0x0057
-	unsigned char uc_Unk0000_0057[0x58];
+
+
+	// 0x00 - 0x1F - GuidOwner members
+
+	// 0x20 - 0x57
+	unsigned char uc_Unk0020_0057[0x58 - 0x20];
 
 	// 0x58 - 0x5F
 	SeinCharacter * m_pSein;
