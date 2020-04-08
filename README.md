@@ -10,9 +10,9 @@ Note: inject once you are in main menu, otherwise issues can arise with pointers
 
 Run Buggy.exe to for overlay display of commands being executed, and to show Position\Speed\Cursor pos, etc.
 
-Hotkeys aren't configurable, input file is created for you if it does not exist.
+Hotkeys are not configurable atm.
 
-In the directory where the game executable is, you can create it however if you want, it looks for Ori.rec.
+For playback, create a file called Ori.rec in the directory where oriwotw.exe is located.
 
 Hotkeys are basic:
 
