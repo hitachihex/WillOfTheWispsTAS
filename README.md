@@ -16,9 +16,11 @@ For playback, create a file called Ori.rec in the directory where oriwotw.exe is
 
 Hotkeys are basic:
 
-F1 - to pause\start framestep.
+F1 - To pause\unpause
 
-F4 - start playback, read from Ori.rec in the directory where the game executable is located.
+F4 - Toggle playback, read from Ori.rec in the directory where the game executable is located.
+
+F9 - Toggle display of in-game OSD (this is the alternative to Buggy)
 
 --------------------------------------------------------
 
