@@ -44,6 +44,7 @@ extern fnUnityEngine_SetMaximumDeltaTime UnityEngine_SetMaximumDeltaTime;
 
 extern unsigned long long *gp_qwUnityEngineTargetFrameRatePtr;
 extern unsigned long long g_qwPlayerInputInstance;
+extern bool g_bShowOSD;
 extern bool g_bPaused;
 extern bool g_bPressedFrameStepThisFrame;
 //extern InputButtonProcessor * g_pUpProcessor, *g_pDownProcessor, *g_pLeftProcessor, *g_pRightProcessor;

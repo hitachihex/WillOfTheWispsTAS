@@ -12,6 +12,7 @@ fnCharPlatformMovement_GetRigidbodyVelocity CharPlatformMovement_GetRigidbodyVel
 fnUnityEngine_SetTimeScale UnityEngine_SetTimeScale = (fnUnityEngine_SetTimeScale)(0x0);
 fnUnityEngine_SetVSyncCount UnityEngine_SetVSyncCount = (fnUnityEngine_SetVSyncCount)(0x0);
 fnUnityEngine_SetMaximumDeltaTime UnityEngine_SetMaximumDeltaTime = (fnUnityEngine_SetMaximumDeltaTime)(0x0);
+bool g_bShowOSD = true;
 bool g_bPaused = false;
 bool g_bPressedFrameStepThisFrame = false;
 PlaybackManager * g_pPlaybackManager = nullptr;

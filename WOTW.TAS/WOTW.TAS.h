@@ -15,6 +15,7 @@
 #include "UnityPlayer.h"
 #include "FixedRandom.h"
 #include "EverythingNeedsMe.h"
+#include "GUI.h"
 #include "Cmd.h"
 //#include "RestrictAbilityController.h"
 #include <Xinput.h>

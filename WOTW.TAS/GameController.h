@@ -19,3 +19,8 @@ extern unsigned long long gqw_GameControllerInstancePtr;
 extern GameController * g_pGameControllerInstance;
 
 extern inline GameController * GetGameControllerInstance();
+
+//typedef void(__fastcall * oPlayerInput_FixedUpdate)(unsigned long long);
+typedef void(__fastcall * oGameController_OnGUI)();
+extern oGameController_OnGUI orig_GameController_OnGUI;
+extern void __fastcall GameController_OnGUI_Hook();

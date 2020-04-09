@@ -4,6 +4,21 @@
 #pragma pack(push, 1)
 
 
+enum EUnityObjectStateFlags : unsigned long
+{
+	FLAG_NONE =  0x0,
+
+	// if all these flags are enabled then an object
+	// is not being activated or deactivated? :think:
+	UNKFLAG_00 = 1 << 0,
+	UNKFLAG_01 = 1 << 1,
+	UNKFLAG_02 = 1 << 2,
+	UNKFLAG_03 = 1 << 3,
+	// --------------------------------
+	OBJECT_PENDING_DESTROY = 1 << 4
+
+};
+
 class ObjectModuleMetadata
 {
 
@@ -43,9 +58,6 @@ private:
 class UnityObject
 {
 public:
-protected:
-private:
-
 	// 0x0000 - 0x0007
 	// ##vtable##
 	// vtable[0x00]
@@ -129,8 +141,18 @@ private:
 	// vtable[0x1A]
 	virtual bool IsEnabled() = 0;
 
-	// 0x0008 - 0x001F
-	unsigned char uc_Unk0008_001F[0x20 - 0x08];
+
+	// ------------------------------------
+	// ------------------------------------
+
+	// 0x0008 - 0x000B
+	unsigned long m_dwUnk0008_000B;
+
+	// 0x000C - 0x000F
+	unsigned long m_dwFlag000C_000F;
+
+	// 0x0010 - 0x001F
+	unsigned char uc_Unk0008_001F[0x20 - 0x10];
 
 	// 0x0020 - 0x0023
 	unsigned long m_dwUnk0020_0023;
@@ -153,11 +175,26 @@ private:
 	// 0x0039
 	bool m_bIsActiveAndEnabled;
 
-	// 0x003A - 0x008F
-	unsigned char uc_Unk003A_008F[0x90 - 0x3A];
+	// 0x003A - 0x0055
+	unsigned char uc_Unk003A_005[0x56 - 0x3A];
+
+	// 0x56
+	// Active?
+	bool m_bFlag0056;
+
+	// 0x57
+	bool m_bFlags0057;
+
+	// 0x0058 - 0x005B;
+	EUnityObjectStateFlags m_ObjectStateFlags;
+
+	// 0x005C - 0x008F
+	unsigned char uc_Unk005C_008F[0x90 - 0x5C];
 
 	// 0x0090 - 0x0097
 	unsigned long long m_qwTransformParent;
+protected:
+private:
 
 };
 class Object

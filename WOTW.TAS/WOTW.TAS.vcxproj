@@ -164,9 +164,12 @@
     <ClInclude Include="EverythingNeedsMe.h" />
     <ClInclude Include="FixedRandom.h" />
     <ClInclude Include="GameController.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameplayCamera.h" />
     <ClInclude Include="GameSettings.h" />
+    <ClInclude Include="GUI.h" />
     <ClInclude Include="GuidOwner.h" />
+    <ClInclude Include="GUILayoutOption.h" />
     <ClInclude Include="IL2CPPDefs.h" />
     <ClInclude Include="InputButtonProcessorTypedefs.h" />
     <ClInclude Include="InputRecord.h" />
@@ -192,6 +195,7 @@
     <ClInclude Include="SeinWallJump.h" />
     <ClInclude Include="SeinWallSlide.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="String.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UI_Cameras.h" />
     <ClInclude Include="UnityAnimator.h" />
@@ -215,6 +219,7 @@
     <ClCompile Include="FixedRandom.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameSettings.cpp" />
+    <ClCompile Include="GUI.cpp" />
     <ClCompile Include="InstantLoadScenesController.cpp" />
     <ClCompile Include="PlaybackManager.cpp" />
     <ClCompile Include="QualitySettings.cpp" />

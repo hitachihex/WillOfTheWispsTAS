@@ -8,4 +8,4 @@ public:
 protected:
 private:
 };
-#pragma pack(pop0)
+#pragma pack(pop)
