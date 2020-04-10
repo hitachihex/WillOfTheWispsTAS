@@ -38,6 +38,7 @@ public:
 		wmemset(&ref->m_wszBytes[0], 0x0, 512 * 4);
 		wmemcpy(&ref->m_wszBytes[0], newBytes, ref->m_nLength);
 	}
+
 	static void Recalcuate(String *ref)
 	{
 		ref->m_nLength = ua_wcslen(ref->m_wszBytes) + 1;

@@ -185,6 +185,7 @@
     <ClInclude Include="RestrictAbilityController.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="ScenesManager.h" />
+    <ClInclude Include="Screen.h" />
     <ClInclude Include="SeinAbilities.h" />
     <ClInclude Include="SeinCharacter.h" />
     <ClInclude Include="SeinChargeJump.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="RestrictAbilityController.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="ScenesManager.cpp" />
+    <ClCompile Include="Screen.cpp" />
     <ClCompile Include="SeinCharacter.cpp" />
     <ClCompile Include="SeinDashNew.cpp" />
     <ClCompile Include="SeinWallJump.cpp" />
@@ -237,6 +239,7 @@
     </ClCompile>
     <ClCompile Include="UI_Cameras.cpp" />
     <ClCompile Include="UnityAnimator.cpp" />
+    <ClCompile Include="UnityEngine_Input.cpp" />
     <ClCompile Include="UnityPlayer.cpp" />
     <ClCompile Include="WOTW.TAS.cpp" />
   </ItemGroup>

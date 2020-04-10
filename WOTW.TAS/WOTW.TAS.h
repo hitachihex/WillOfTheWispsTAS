@@ -17,6 +17,7 @@
 #include "EverythingNeedsMe.h"
 #include "GUI.h"
 #include "Cmd.h"
+#include "Screen.h"
 //#include "RestrictAbilityController.h"
 #include <Xinput.h>
 

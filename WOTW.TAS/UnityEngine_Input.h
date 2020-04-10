@@ -1,5 +1,6 @@
 #pragma once
 
+#define UNITYPLAYER_GETMOUSEBUTTONUP_RVA 0x929160
 #pragma pack(push, 1)
 typedef struct t_UnityEngine_Input
 {
@@ -18,3 +19,5 @@ typedef struct t_UnityEngine_Input
 }UnityEngine_Input;
 #pragma pack(pop)
 
+typedef bool(__fastcall * fnUnityEngine_Input_GetMouseButtonUp)(int);
+extern fnUnityEngine_Input_GetMouseButtonUp Input_GetMouseButtonUp;

@@ -55,6 +55,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	// Patch GameController::OnApplicationFocus
 	ApplyPatch((Assembly_BaseAddr)+0x49EC5B, "\xFF\xC5\x90");
 
+	String::Set(g_pTextAreaString, L"120.0,139.0,32");
 	String::Set(g_pGUIString, L"WILL YOU REMEEEEMBER, ME I WILL REMEEEEMBER YOU");
 
 	DWORD dwOldProt;
@@ -68,16 +69,23 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	gqw_CmdInstancePtr = ((Assembly_BaseAddr)+GAMEASSEMBLY_CMDINSTANCE_PTR_RVA);
 	gqw_FixedRandomInstancePtr = ((Assembly_BaseAddr)+FIXEDRANDOM_INSTANCEPTR_RVA);
 	gqw_SeinCharacterPtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+CHARACTERS_GETSEIN_NEWPATCH_RVA, 0x86));
+
+	// what?
 	gqw_GameSettingsInstance_Ptr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+PLAYERINPUT_GETWASKEYBOARDUSEDLAST_NEWPATCH_RVA, 0x65));
 	gqw_GameSettingsInstance_Ptr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+UNKNOWN_FUNCTION_OFFSETFORQUALITYSETTINGS_NEWPATCH_RVA, 0x2DF));
+
 	gqw_InstantLoadScenesControllerInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+INSTANTLOADSCENESCONTROLLER_AWAKE_NEWPATCH_RVA, INSTANTLOADSCENESCONTROLLER_OFFSET_TO_PTR));
 	gqw_GameControllerInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+GAMECONTROLLER_RESETSTATISTICS_NEWPATCH_RVA, GAMECONTROLLERINSTANCE_OFFSET_TO_PTR));
 	gqw_ScenesManagerInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+INSTANTLOADSCENESCONTROLLER_GETSCENESMANAGER_NEWPATCH_RVA, INSTANTLOADSCENESCONTROLLER_OFFSET_TO_SM_PTR));
 	gqw_UICamerasInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+PLAYERINPUT_FIXEDUPDATE_NEWPATCH_RVA, 0xB9));
 	gqw_CoreInputInstancePtr = (RelativeAddressCalcFromDatasegment((Assembly_BaseAddr)+PLAYERINPUT_FIXEDUPDATE_NEWPATCH_RVA, 0x27B));
+	g_qwScreenInstancePtr = ((UnityPlayer_BaseAddr) + UNITYPLAYER_SCREENINSTANCE_RVA);
 	g_pSeinCharacter = GetSeinCharacter();
 
 	// Because we have no other way to set it.
+	*(unsigned long long*)(&Input_GetMouseButtonUp) = ((UnityPlayer_BaseAddr) + UNITYPLAYER_GETMOUSEBUTTONUP_RVA);
+	*(unsigned long long*)(&InternalDoWindowInjected) = ((UnityPlayer_BaseAddr) + UNITYPLAYER_INTERNALDOWINDOWINJECTED_RVA);
+	*(unsigned long long*)(&GUI_TextArea) = ((Assembly_BaseAddr) + GAMEASSEMBLY_GUITEXTAREA_RVA);
 	*(unsigned long long*)(&GUILabel_ContentAndStyle) = ((Assembly_BaseAddr)+GAMEASSEMBLY_GUILABELCONTENTANDSTYLE_RVA);
 	*(unsigned long long*)(&GUI_Label) = ((Assembly_BaseAddr)+GAMEASSEMBLY_GUI_LABEL_RVA);
 
@@ -213,6 +221,7 @@ void * __fastcall il2cpp_runtime_invoke_Hook(MethodInfo* pMethodInfo, void* obj,
 void __fastcall WOTW_UnityEngine_PlayerLoopInternal_Hook()
 {
 	DoOnceBlock("WOTW_UnityEngine_PlayerLoopInternal_Hook, !bOnce");
+
 	if (GetAsyncKeyState(VK_F1) & 1)
 	{
 		g_bPaused = !g_bPaused;
