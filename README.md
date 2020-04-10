@@ -22,6 +22,8 @@ F4 - Toggle playback, read from Ori.rec in the directory where the game executab
 
 F9 - Toggle display of in-game OSD (this is the alternative to Buggy)
 
+Middle mouse click to move top left corner of OSD to cursor location in-game.
+
 --------------------------------------------------------
 
 [ - To step one frame (this also reloads the input file so you can make changes to the inputs while framestepping.)<br/>
