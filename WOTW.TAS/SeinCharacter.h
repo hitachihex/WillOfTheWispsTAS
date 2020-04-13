@@ -1,4 +1,6 @@
 #pragma once
+
+#include <string>
 #include "Vector3.h"
 //#include "CharacterState.h"
 #include "CharacterPlatformMovement.h"
@@ -169,6 +171,10 @@ public:
 		return ((bool(__fastcall*)(SeinChargeJump*))(Assembly_BaseAddr + GAMEASSEMBLY_SEINCHARGEJUMP_CANSTARTCHARGING_RVA))(this->m_pAbilities->ChargeJumpWrapper->State);
 
 	}
+
+	std::string GetConditionalCharacterStateInfo();
+	
+	std::string GetActiveCharacterStateInfo();
 };
 #pragma pack(pop)
 

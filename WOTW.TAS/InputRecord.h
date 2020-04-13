@@ -119,6 +119,8 @@ public:
 
 	bool HasPos;
 
+	bool HasLoad;
+
 	bool HasKinematicSetting;
 	unsigned int Kinematicism;
 
@@ -387,7 +389,8 @@ public:
 		this->MousePosX = 0.0f;
 		this->MousePosY = 0.0f;
 		this->HasMouse = false;
-
+		this->HasLoad = false;
+		this->HasSeed = false;
 		this->HasKinematicSetting = false;
 		this->Kinematicism = KINEMATIC_DISABLED;
 
@@ -507,6 +510,12 @@ public:
 					bWasValidToken = true;
 					continue;
 
+				}
+				else if (token == "LOAD" || token == "RESTORE")
+				{
+					this->HasLoad = true;
+					bWasValidToken = true;
+					continue;
 				}
 				else if (token == "RIGHT")
 				{

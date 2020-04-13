@@ -18,6 +18,12 @@ public:
 
 	// 0x184 - 0x18B
 	Vector2 m_CurrentCameraTargetPosition;
+
+	// 0x18C - 0x1EF
+	unsigned char uc_Unk018C_01EF[0x1F0 - 0x18C];
+
+	// 0x1F0 - 0x1F3
+	float m_testDelayTime;
 protected:
 private:
 } ScenesManager;

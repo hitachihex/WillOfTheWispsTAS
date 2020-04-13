@@ -83,6 +83,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	g_pSeinCharacter = GetSeinCharacter();
 
 	// Because we have no other way to set it.
+	*(unsigned long long*)(&SeinComboHandler_IsPerformingAttackAbility) = ((Assembly_BaseAddr) + GAMEASSEMBLY_SEINCOMBOHANDLER_ISPERFORMINGATTACKABILITY_RVA);
 	*(unsigned long long*)(&Input_GetMouseButtonUp) = ((UnityPlayer_BaseAddr) + UNITYPLAYER_GETMOUSEBUTTONUP_RVA);
 	*(unsigned long long*)(&InternalDoWindowInjected) = ((UnityPlayer_BaseAddr) + UNITYPLAYER_INTERNALDOWINDOWINJECTED_RVA);
 	*(unsigned long long*)(&GUI_TextArea) = ((Assembly_BaseAddr) + GAMEASSEMBLY_GUITEXTAREA_RVA);

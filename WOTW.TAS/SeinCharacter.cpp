@@ -18,4 +18,98 @@ inline SeinCharacter * GetSeinCharacter()
 	return (SeinCharacter*)(rax);
 }
 
+std::string SeinCharacter::GetConditionalCharacterStateInfo()
+{
+	std::string output = "";
+
+	if (this->CanJump())
+		output += "CanJump, ";
+
+	ISWRAPPERSTATEVALID(this, DashNewWrapper)
+	{
+		if (SeinDashNew_CanDash(this->m_pAbilities->DashNewWrapper->State))
+			output += "CanDash, ";
+	}
+
+	ISWRAPPERSTATEVALID(this, WallJumpWrapper)
+	{
+		if (EXW4M(this, WallJumpWrapper)->CanPerformWallJump())
+			output += "CanWallJump, ";
+	}
+
+	if (this->CanDoubleJump())
+		output += "CanDJump, ";
+	
+	if (this->CanChargeJump())
+		output += "CanLaunch, ";
+
+	return output;
+}
+
+#pragma warning(disable : 4996)
+std::string SeinCharacter::GetActiveCharacterStateInfo()
+{
+
+	bool isDashing = false;
+
+	std::string output = "";
+
+	if (this->pPlatformBehaviour->pPlatformMovement->m_pOnGround->IsOn)
+		output += "Grounded, ";
+
+	if (this->pPlatformBehaviour->pPlatformMovement->m_pCeiling->IsOn)
+		output += "OnCeiling, ";
+
+	if (this->IsOnWall())
+		output += "OnWall, ";
+
+	if (this->IsInAir())
+		output += "InAir, ";
+
+	if (this->IsFalling())
+		output += "Falling, ";
+
+	ISWRAPPERSTATEVALID(this, DashNewWrapper)
+	{
+		if (EXW4M(this, DashNewWrapper)->m_isDashing)
+		{
+			output += "Dashing, ";
+			isDashing = true;
+		}
+	}
+
+	ISWRAPPERSTATEVALID(this, ComboWrapper)
+	{
+		if (EXW4M(this, ComboWrapper)->m_pCurrentComboMove != nullptr)
+		{
+			ComboMoveType cmt = EXW4M(this, ComboWrapper)->m_pCurrentComboMove->get_ComboMoveType();
+			if (cmt == ComboMoveType::Attack)
+			{
+				output += "IsAttack <";
+				output += EXW4M(this, ComboWrapper)->m_pCurrentComboMove->m_pInterfaceDef->m_szScriptClassName;
+				output += ">, ";
+			}
+			else if (cmt == ComboMoveType::MovementAbility)
+			{
+				output += "IsAbility <";
+				output += EXW4M(this, ComboWrapper)->m_pCurrentComboMove->m_pInterfaceDef->m_szScriptClassName;
+				output += ">, ";
+			}
+			else if (cmt == ComboMoveType::ComboMove_Any)
+			{
+				output += "IsAny <";
+				output += EXW4M(this, ComboWrapper)->m_pCurrentComboMove->m_pInterfaceDef->m_szScriptClassName;
+				output += ">, ";
+			}
+				
+		}
+	}
+	else
+		output += "ComboWrapper state invalid.";
+
+
+	return output;
+}
+
+
 

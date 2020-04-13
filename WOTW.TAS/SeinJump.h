@@ -5,7 +5,7 @@
 
 #pragma pack(push, 1)
 
-class SeinJump : CharacterState
+class SeinJump : public CharacterState
 {
 	// 0x0000 - 0x007F -- CharacterState members
 

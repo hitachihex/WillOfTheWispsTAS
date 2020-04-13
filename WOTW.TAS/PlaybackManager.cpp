@@ -496,51 +496,13 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		if (pCharSpeed == nullptr)
 			return;
 
-		std::string CharacterStateInfo = "";
-
-		if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pOnGround->IsOn)
-			CharacterStateInfo += "Grounded, ";
-
-
-		if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pCeiling->IsOn)
-			CharacterStateInfo += "OnCeiling, ";
-
-		if (pSeinChar->IsOnWall())
-			CharacterStateInfo += "OnWall, ";
-
-		if (pSeinChar->IsFalling())
-			CharacterStateInfo += "Falling, ";
-
-		if (pSeinChar->CanJump())
-			CharacterStateInfo += "Jump, ";
-
-		//ObjectAs(pSeinChar->)
-		ISWRAPPERSTATEVALID(pSeinChar, DashNewWrapper)
-		{
-			if (SeinDashNew_CanDash(pSeinChar->m_pAbilities->DashNewWrapper->State))
-				CharacterStateInfo += "CanDash, ";
-		}
-
-		ISWRAPPERSTATEVALID(pSeinChar, WallJumpWrapper)
-		{
-			if(EXW4M(pSeinChar, WallJumpWrapper)->CanPerformWallJump())
-				CharacterStateInfo += "CanWallJump, ";
-		}
-
-		if (pSeinChar->IsInAir())
-			CharacterStateInfo += "InAir, ";
-
-		if (pSeinChar->CanDoubleJump())
-			CharacterStateInfo += "CanDJump, ";
-
-		if (pSeinChar->CanChargeJump())
-			CharacterStateInfo += "CanLaunch, ";
-
+		std::string CharacterStateInfo = pSeinChar->GetConditionalCharacterStateInfo();
+		std::string ActiveCharStateInfo = pSeinChar->GetActiveCharacterStateInfo();
 
 		// Done / Frames
-		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nRNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharInfo: %s", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nRNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharInfo: %s\nActiveCharState: %s", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
 			this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame, this->m_nTotalFrameCount, GetFixedRandomInstance()->FixedUpdateIndex, g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY,
-			charPos->x, charPos->y, pCharSpeed->x, pCharSpeed->y, CharacterStateInfo.c_str());
+			charPos->x, charPos->y, pCharSpeed->x, pCharSpeed->y, CharacterStateInfo.c_str(), ActiveCharStateInfo.c_str());
 
 		if (m_pCurrentInput->HasPos)
 		{
@@ -561,6 +523,12 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		{
 			bool kinEnabled = (m_pCurrentInput->Kinematicism == KINEMATIC_ENABLED);
 			Rigidbody_SetIsKinematic(GetSeinCharacter()->pPlatformBehaviour->pPlatformMovement->m_pRigidbody, kinEnabled);
+		}
+		
+		if (m_pCurrentInput->HasLoad)
+		{
+			GetGameControllerInstance()->m_pSaveGameController->PerformLoad();
+			GetScenesManagerInstance()->m_testDelayTime = 1.0f;
 		}
 
 	}
@@ -595,45 +563,13 @@ void PlaybackManager::FormatWithoutPlayback()
 	if (!pCharSpeed)
 		return;
 	
-	std::string CharacterStateInfo = "";
+	std::string CharacterStateInfo = pSeinChar->GetConditionalCharacterStateInfo();
+	std::string ActiveCharStateInfo = pSeinChar->GetActiveCharacterStateInfo();
 
-	if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pOnGround->IsOn)
-		CharacterStateInfo += "Grounded, ";
-
-	if (pSeinChar->pPlatformBehaviour->pPlatformMovement->m_pCeiling->IsOn)
-		CharacterStateInfo += "OnCeiling, ";
-
-	if (pSeinChar->IsOnWall())
-		CharacterStateInfo += "OnWall, ";
-
-	if (pSeinChar->IsFalling())
-		CharacterStateInfo += "Falling, ";
-	 
-	if (pSeinChar->CanJump())
-		CharacterStateInfo += "Jump, ";
-
-	if(pSeinChar->m_pAbilities->DashNewWrapper->State != nullptr)
-		if (SeinDashNew_CanDash(pSeinChar->m_pAbilities->DashNewWrapper->State))
-			CharacterStateInfo += "CanDash, ";
-
-	if(pSeinChar->m_pAbilities->WallJumpWrapper->State != nullptr)
-		if (SeinWallJump_CanPerformWallJump(pSeinChar->m_pAbilities->WallJumpWrapper->State))
-			CharacterStateInfo += "CanWallJump, ";
-
-	if (pSeinChar->IsInAir())
-		CharacterStateInfo += "InAir, ";
-
-	if (pSeinChar->CanDoubleJump())
-		CharacterStateInfo += "CanDJump, ";
-
-	if (pSeinChar->CanChargeJump())
-		CharacterStateInfo += "CanLaunch, ";
-
-
-	sprintf(this->m_szCurrentManagerState, "RNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharStateInfo: %s",
+	sprintf(this->m_szCurrentManagerState, "RNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharStateInfo: %s\nActiveCharState: %s",
 		GetFixedRandomInstance()->FixedUpdateIndex,
 		g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY, charPos->x, charPos->y,
-		pCharSpeed->x, pCharSpeed->y, CharacterStateInfo.c_str());
+		pCharSpeed->x, pCharSpeed->y, CharacterStateInfo.c_str(), ActiveCharStateInfo.c_str());
 }
 
 InputRecord * PlaybackManager::GetCurrentInput()

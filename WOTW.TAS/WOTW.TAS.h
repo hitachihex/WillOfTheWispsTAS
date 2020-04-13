@@ -18,6 +18,7 @@
 #include "GUI.h"
 #include "Cmd.h"
 #include "Screen.h"
+#include "SeinComboHandler.h"
 //#include "RestrictAbilityController.h"
 #include <Xinput.h>
 

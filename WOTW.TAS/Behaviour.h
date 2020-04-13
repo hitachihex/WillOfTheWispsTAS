@@ -6,7 +6,7 @@ class Behaviour : public Component
 {
 public:
 
-	// 0x0000 - 0x001F -- Component members
+	// 0x0000 - 0x0017 -- Component members
 
 protected:
 private:
