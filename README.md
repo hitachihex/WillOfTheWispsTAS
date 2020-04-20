@@ -13,8 +13,7 @@ Run Buggy.exe to for overlay display of commands being executed, and to show Pos
 Hotkeys are configurable with the in-game rebind menu (default to toggle it is F8)
 To rebind, press the button and then press the key you would like to assign it to.
 You may use modifiers : Shift, Ctrl or Alt. (Does not distinguish between Left or Right variants)
-# NOTE: Some combinations are disallowed to prevent some very annoying side effects
-# if you manage to somehow find a combination that breaks everything, delete Config.ini
+# NOTE: Some combinations are disallowed to prevent some very annoying side effects if you manage to somehow find a combination that breaks everything, delete Config.ini
 # in the directory where oriwotw.exe is located.
 
 For playback, create a file called Ori.rec in the directory where oriwotw.exe is located.
