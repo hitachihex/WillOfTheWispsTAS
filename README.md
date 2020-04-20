@@ -86,6 +86,10 @@ Accepted commands are: <br />
     Ability3 <br />
     Cancel <br />
     Select <br />
+	Talk or AdvanceDialogue or Dialogue - Advances dialogue boxes <br />
+	Option1 or Choose1 - chooses dialogue option 1 <br />
+	Option2 or Choose2 - chooses dialogue option 2 <br />
+	Option3 or Choose3 - chooses dialogue option 3 <br />
 
 	
 
