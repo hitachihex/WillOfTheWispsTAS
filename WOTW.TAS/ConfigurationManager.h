@@ -162,7 +162,6 @@ typedef struct t_Key
 {
 public:
 
-	t_Key() {}
 
 	t_Key(unsigned short vkc, unsigned short ukc, const wchar_t * character, void * badFood)
 	{
@@ -343,6 +342,8 @@ public:
 	{
 
 		// decouple these from Key def.. idiot
+		this->m_JustSetTimer = 0.0f;
+		this->m_GracePressedTimer = 0.0f;
 		this->m_bWasDown = false;
 		this->m_bDown = false;
 		this->m_bUp = false;

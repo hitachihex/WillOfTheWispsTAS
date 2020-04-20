@@ -21,7 +21,12 @@ public:
 		wmemset(&this->m_wszBytes[0], 0x0, 512 * 4);
 	}
 
-	String(unsigned long long instVal) : m_qwUnk0000_0007(instVal) {}
+	String(unsigned long long instVal) : m_qwUnk0000_0007(instVal)
+	{
+		this->m_qwUnk0008_000F = 0x0;
+		this->m_nLength = 0;
+		wmemset(&this->m_wszBytes[0], 0x0, 512 * 4);
+	}
 
 	// 0x0000 - 0x0007
 	unsigned long long m_qwUnk0000_0007;

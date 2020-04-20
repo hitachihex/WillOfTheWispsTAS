@@ -387,6 +387,7 @@ public:
 	t_InputRecord(std::string line, unsigned int ln)
 	{
 		this->m_InputState = EInputState::DEFAULT_NONE;
+		this->m_nSeed = 1337;
 		this->MousePosX = 0.0f;
 		this->MousePosY = 0.0f;
 		this->HasMouse = false;

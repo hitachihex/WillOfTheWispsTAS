@@ -50,3 +50,7 @@
 *.log
 *.lastbuildstate
 *.suo
+*.tmp
+*.xml
+*.codeanalysisast
+*.lastcodeanalysissucceeded
