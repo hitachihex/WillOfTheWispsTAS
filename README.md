@@ -10,19 +10,30 @@ Note: inject once you are in main menu, otherwise issues can arise with pointers
 
 Run Buggy.exe to for overlay display of commands being executed, and to show Position\Speed\Cursor pos, etc.
 
-Hotkeys are not configurable atm.
+Hotkeys are configurable with the in-game rebind menu (default to toggle it is F8)
 
 For playback, create a file called Ori.rec in the directory where oriwotw.exe is located.
 
-Hotkeys are basic:
+Default hotkeys are:
 
 F1 - To pause\unpause
 
 F4 - Toggle playback, read from Ori.rec in the directory where the game executable is located.
 
-F9 - Toggle display of in-game OSD (this is the alternative to Buggy)
+F8 - Toggle in-game menu for rebinding hotkeys.
 
-Middle mouse click to move top left corner of OSD to cursor location in-game.
+# NOTE: This is a bit of a defunct feature now currently, as it displays information 1 frame late.
+# When using Buggy, you will always see the status of Ori after *everything* has executed.
+F9 - Toggle display of in-game OSD 
+
+Ctrl + Right click -  to move top left corner of in-game OSD to cursor location in-game.
+
+
+Ctrl + Numpad 1 - Copy cursor position to clipboard
+
+Ctrl + Numpad 2 - Copy player position to clipboard
+
+Ctrl + Numpad 3 - Copy player speed to clipboard
 
 --------------------------------------------------------
 
