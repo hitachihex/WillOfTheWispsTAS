@@ -60,7 +60,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 
 	String::Set(g_pTextAreaString, L"Temporary String");
 	String::Set(g_pGUIString, L"Temporary String");
-	String::SetUnknown0(g_pTextAreaString, 1);
+	//String::SetUnknown0(g_pTextAreaString, 1);
 
 	DWORD dwOldProt;
 	VirtualProtect((LPVOID)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA), 8, PAGE_EXECUTE_READWRITE, &dwOldProt);

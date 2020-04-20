@@ -10,14 +10,19 @@ public:
 
 	String()
 	{
-
-		// it doesn't really care what these are, it does not use them
+		// Turns out it does care what these are, at least inst\vtable
+		// Setting it to 1 seems to fix the crashing resulted in injecting
+		// too early and also doesn't seem to cause any issues.
 		this->m_qwUnk0000_0007 = 0x0;
+
 		this->m_qwUnk0008_000F = 0x0;
 
 		this->m_nLength = 0;
 		wmemset(&this->m_wszBytes[0], 0x0, 512 * 4);
 	}
+
+	String(unsigned long long instVal) : m_qwUnk0000_0007(instVal) {}
+
 	// 0x0000 - 0x0007
 	unsigned long long m_qwUnk0000_0007;
 

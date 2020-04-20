@@ -24,7 +24,7 @@ Rect *g_pPositionForWindow = new Rect(20.0f, 20.0f, 120.0f, 50.0f);
 //00007FFFD52D184D | 48:8B0D 2423F303 | mov rcx,qword ptr ds:[7FFFD9203B78] | ; GUILayoutOptions -- default
 //.data:00007FFFD9203B78 gameassembly.dll:$43D3B78 #0
 String * g_pGUIString = new String();
-String * g_pTextAreaString = new String();
+String * g_pTextAreaString = new String(0x1);
 
 
 

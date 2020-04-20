@@ -9,8 +9,8 @@ public:
 
 	UnityTextArea(const wchar_t * AreaText, float xPos, float yPos, float width, float height, bool _volatile = false)
 	{
-		this->m_Text = new String();
-		String::SetUnknown0(this->m_Text, 1);
+		this->m_Text = new String(0x1);
+		//String::SetUnknown0(this->m_Text, 1);
 		String::Set(this->m_Text, AreaText);
 		this->m_Position.Set(xPos, yPos, width, height);
 		this->m_bVolatile = _volatile;
