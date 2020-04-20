@@ -129,6 +129,8 @@ public:
 
 	bool HasLoad;
 
+	bool HasUberLoad;
+
 	bool HasKinematicSetting;
 	unsigned int Kinematicism;
 
@@ -435,6 +437,7 @@ public:
 		this->MousePosX = 0.0f;
 		this->MousePosY = 0.0f;
 		this->HasMouse = false;
+		this->HasUberLoad = false;
 		this->HasLoad = false;
 		this->HasSeed = false;
 		this->HasKinematicSetting = false;
@@ -560,6 +563,12 @@ public:
 				else if (token == "LOAD" || token == "RESTORE")
 				{
 					this->HasLoad = true;
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "UBERLOAD")
+				{
+					this->HasUberLoad = true;
 					bWasValidToken = true;
 					continue;
 				}

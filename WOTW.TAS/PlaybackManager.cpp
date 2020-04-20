@@ -559,6 +559,12 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 			GetScenesManagerInstance()->m_testDelayTime = 1.0f;
 		}
 
+		if (m_pCurrentInput->HasUberLoad)
+		{
+			GetGameControllerInstance()->m_pSaveGameController->PerformLoadUberState();
+			GetScenesManagerInstance()->m_testDelayTime = 1.0f;
+		}
+
 	}
 
 	return;
