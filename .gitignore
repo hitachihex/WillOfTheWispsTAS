@@ -43,3 +43,6 @@
 *.tlog
 *.iobj
 *.ipdb
+*.pdb
+WOTW.TAS/x64/Release/vc141.pdb
+*.iobj
