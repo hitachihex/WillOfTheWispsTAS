@@ -70,6 +70,7 @@ Accepted commands are: <br />
     Rng, Random, Seed - for setting the random seed of the game e.g Seed, 80085 <br />
     Pos  - for setting oris position, in form of Pos,xpos,ypos <br /> 
     Load - for loading a checkpoint. <br />
+	UberLoad - for loading a checkpoint with a reloaded uberstate. <br />
     Mouse - set mouse pos e.g Mouse, xpos, ypos -- values clamped to viewport from top left of game window as 0.0, 0.0 <br />
     Wheel <br />
     Glide <br />
