@@ -29,6 +29,10 @@ unsigned long long *gp_qwUnityEngineTargetFrameRatePtr = nullptr;
 
 PlaybackManager::PlaybackManager(const char *pcszFileName)
 {
+	this->m_CursorPos = "";
+	this->m_PlayerPos = "";
+	this->m_PlayerSpeed = "";
+
 	// NativeInjectionEntryPoint sets the base addr before this happens, we're good to do this here now
 	*(unsigned long long*)(&UnityEngine_SetTimeScale) = (UnityPlayer_BaseAddr) + UNITYENGINE_SETTIMESCALE_NEWPATCH_RVA;
 	*(unsigned long long*)(&UnityEngine_SetVSyncCount) = (UnityPlayer_BaseAddr) + UNITYENGINE_SETVSYNCCOUNT_NEWPATCH_RVA;
@@ -487,6 +491,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		pCmd->Glide->Update(m_pCurrentInput->IsGlide());
 
 
+		/*
 		Vector3 * charPos = pSeinChar->GetRigidbodyPosition();
 		Vector3 * pCharSpeed = pSeinChar->GetRigidbodyVelocity();
 	
@@ -499,19 +504,36 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		std::string CharacterStateInfo = pSeinChar->GetConditionalCharacterStateInfo();
 		std::string ActiveCharStateInfo = pSeinChar->GetActiveCharacterStateInfo();
 
+
+		this->m_CursorPos = std::to_string(g_pCoreInput->CursorPosition.m_fX);
+		this->m_CursorPos += ",";
+		this->m_CursorPos += std::to_string(g_pCoreInput->CursorPosition.m_fY);
+
+		this->m_PlayerPos = std::to_string(charPos->x);
+		this->m_PlayerPos += ",";
+		this->m_PlayerPos += std::to_string(charPos->y);
+
+		this->m_PlayerSpeed = std::to_string(pCharSpeed->x);
+		this->m_PlayerSpeed += ",";
+		this->m_PlayerSpeed += std::to_string(pCharSpeed->y);
+
 		// Done / Frames
 		sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nRNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharInfo: %s\nActiveCharState: %s", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
 			this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame, this->m_nTotalFrameCount, GetFixedRandomInstance()->FixedUpdateIndex, g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY,
 			charPos->x, charPos->y, pCharSpeed->x, pCharSpeed->y, CharacterStateInfo.c_str(), ActiveCharStateInfo.c_str());
+		*/
+
+		//this->PlaybackFormatWithPlayback();
 
 		if (m_pCurrentInput->HasPos)
 		{
+			Vector3 * charPos = pSeinChar->GetRigidbodyPosition();
 			/*
                TODO: See if setting kinematicism and then disabling it afterwards
 		             can make this better.
             */
 
-			// thought maybe this would help pos sets, but nope, they're still fucked
+			// thought maybe this would help pos sets, but nope, they're still fucky
 			pSeinChar->pPlatformBehaviour->pPlatformMovement->m_PreviousPosition.x = m_pCurrentInput->xPos;
 			pSeinChar->pPlatformBehaviour->pPlatformMovement->m_PreviousPosition.y = m_pCurrentInput->yPos;
 			pSeinChar->pPlatformBehaviour->pPlatformMovement->m_PreviousPosition.z = charPos->z;
@@ -536,15 +558,61 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 	return;
 }
 
-inline void PlaybackManager::PlaybackFormatAll()
+void PlaybackManager::FormatConditonally()
 {
+	if (this->m_bPlayingBack)
+		return this->FormatWithPlayback();
+
+	return this->FormatWithoutPlayback();
+}
+
+void PlaybackManager::FormatWithPlayback()
+{
+	//memset(&this->m_szCurrentManagerState[0], 0, 800);
+	// ahh, we ..
+
+	auto pSeinChar = GetSeinCharacter();
+	
+	if (!pSeinChar)
+		return;
+
+	Vector3 * charPos = pSeinChar->GetRigidbodyPosition();
+	Vector3 * pCharSpeed = pSeinChar->GetRigidbodyVelocity();
+
+	if (charPos == nullptr)
+		return;
+
+	if (pCharSpeed == nullptr)
+		return;
+
+	if (!g_pCoreInput)
+		return;
+
+	std::string CharacterStateInfo = pSeinChar->GetConditionalCharacterStateInfo();
+	std::string ActiveCharStateInfo = pSeinChar->GetActiveCharacterStateInfo();
+
+
+	this->m_CursorPos = std::to_string(g_pCoreInput->CursorPosition.m_fX);
+	this->m_CursorPos += ",";
+	this->m_CursorPos += std::to_string(g_pCoreInput->CursorPosition.m_fY);
+
+	this->m_PlayerPos = std::to_string(charPos->x);
+	this->m_PlayerPos += ",";
+	this->m_PlayerPos += std::to_string(charPos->y);
+
+	this->m_PlayerSpeed = std::to_string(pCharSpeed->x);
+	this->m_PlayerSpeed += ",";
+	this->m_PlayerSpeed += std::to_string(pCharSpeed->y);
+
+	// Done / Frames
+	sprintf(this->m_szCurrentManagerState, "Ln: %u (%u / %u) - [%s]\n(Cur:%u / Total:%u)\nRNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharInfo: %s\nActiveCharState: %s", this->m_pCurrentInput->m_nLineNo, this->m_pCurrentInput->m_Done, this->m_pCurrentInput->m_Frames,
+		this->m_pCurrentInput->ToString().c_str(), this->m_CurrentFrame, this->m_nTotalFrameCount, GetFixedRandomInstance()->FixedUpdateIndex, g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY,
+		charPos->x, charPos->y, pCharSpeed->x, pCharSpeed->y, CharacterStateInfo.c_str(), ActiveCharStateInfo.c_str());
 	return;
 }
 
 void PlaybackManager::FormatWithoutPlayback()
 {
-
-	// This crash me?
 	memset(&this->m_szCurrentManagerState[0], 0, 800);
 
 	Vector3 tempOut;
@@ -560,12 +628,29 @@ void PlaybackManager::FormatWithoutPlayback()
 	Vector3 * charPos = pSeinChar->GetRigidbodyPosition();
 	Vector3 * pCharSpeed = pSeinChar->GetRigidbodyVelocity();
 
+	if (!charPos)
+		return;
+
 	if (!pCharSpeed)
 		return;
+
+	this->m_CursorPos = std::to_string(g_pCoreInput->CursorPosition.m_fX);
+	this->m_CursorPos += ",";
+	this->m_CursorPos += std::to_string(g_pCoreInput->CursorPosition.m_fY);
+
+	this->m_PlayerPos = std::to_string(charPos->x);
+	this->m_PlayerPos += ",";
+	this->m_PlayerPos += std::to_string(charPos->y);
+
+	this->m_PlayerSpeed = std::to_string(pCharSpeed->x);
+	this->m_PlayerSpeed += ",";
+	this->m_PlayerSpeed += std::to_string(pCharSpeed->y);
 	
 	std::string CharacterStateInfo = pSeinChar->GetConditionalCharacterStateInfo();
 	std::string ActiveCharStateInfo = pSeinChar->GetActiveCharacterStateInfo();
 
+	// A BIG TODO:, update all of this AFTER all the FixedUpdates are done
+	// this way you are not 1 frame behind on all of your shit :)
 	sprintf(this->m_szCurrentManagerState, "RNG: %u\nCursor: %f, %f\nPosition: %f, %f\nSpeed: %f, %f\nCharStateInfo: %s\nActiveCharState: %s",
 		GetFixedRandomInstance()->FixedUpdateIndex,
 		g_pCoreInput->CursorPosition.m_fX, g_pCoreInput->CursorPosition.m_fY, charPos->x, charPos->y,
@@ -585,6 +670,72 @@ InputRecord * PlaybackManager::GetCurrentInputIndexBased()
 XINPUT_STATE * PlaybackManager::GetXInputState()
 {
 	return this->m_pGamePadState;
+}
+
+void PlaybackManager::CopyToClipboard(std::string s)
+{
+	OpenClipboard(0);
+	EmptyClipboard();
+
+	HGLOBAL hg = GlobalAlloc(GMEM_MOVEABLE, s.size() + 1);
+	if (!hg)
+	{
+		CloseClipboard();
+		return;
+	}
+	
+	memcpy(GlobalLock(hg), s.c_str(), s.size() + 1);
+
+	GlobalUnlock(hg);
+	SetClipboardData(CF_TEXT, hg);
+	CloseClipboard();
+	GlobalFree(hg);
+
+}
+
+void PlaybackManager::CopyCursorPosition()
+{
+
+	if (!g_pCoreInput)
+		return;
+
+	/*
+	std::string temp = std::to_string(g_pCoreInput->CursorPosition.m_fX);
+	temp += ",";
+	temp += std::to_string(g_pCoreInput->CursorPosition.m_fY);*/
+
+	CopyToClipboard(this->m_CursorPos);
+}
+void PlaybackManager::CopyPlayerPosition()
+{
+	/*
+	auto pSeinChar = GetSeinCharacter();
+	if (!pSeinChar)
+		return;
+
+	Vector3 * charPos = pSeinChar->GetRigidbodyPosition();
+	
+	std::string temp = std::to_string(charPos->x);
+	temp += ",";
+	temp += std::to_string(charPos->y);*/
+	
+	CopyToClipboard(this->m_PlayerPos);
+}
+
+void PlaybackManager::CopyPlayerSpeed()
+{
+	/*
+	auto pSeinChar = GetSeinCharacter();
+	if (!pSeinChar)
+		return;
+
+	Vector3 * pCharSpeed = pSeinChar->GetRigidbodyVelocity();
+
+	std::string temp = std::to_string(pCharSpeed->x);
+	temp += ",";
+	temp += std::to_string(pCharSpeed->y);*/
+
+	CopyToClipboard(this->m_PlayerSpeed);
 }
 
 

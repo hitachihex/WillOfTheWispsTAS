@@ -83,6 +83,6 @@ extern unsigned long long PlayerInput_FixedUpdate_VA;
 
 extern void DumpPointersForExternalOSD();
 extern void ApplyNops(unsigned long long,unsigned int);
-extern void ApplyPatch(unsigned long long, const char*);
+extern void ApplyPatch(unsigned long long, const char*, unsigned int);
 
 

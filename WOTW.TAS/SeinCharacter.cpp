@@ -11,7 +11,13 @@ inline SeinCharacter * GetSeinCharacter()
 {
 	unsigned long long rax = *(unsigned long long*)(gqw_SeinCharacterPtr);
 
+	if (!rax)
+		return nullptr;
+
 	rax = *(unsigned long long*)(rax + 0xB8);
+
+	if (!rax)
+		return nullptr;
 
 	rax = *(unsigned long long*)(rax + 0x10);
 
@@ -82,25 +88,38 @@ std::string SeinCharacter::GetActiveCharacterStateInfo()
 	{
 		if (EXW4M(this, ComboWrapper)->m_pCurrentComboMove != nullptr)
 		{
+			auto pccm = EXW4M(this, ComboWrapper)->m_pCurrentComboMove;
+			
+			output += "AbilityType: ";
+			auto abType = (unsigned int)pccm->get_ComboAbilityType();
+			output += std::to_string(abType);
+			output += ", ";
+
+
+			/*
 			ComboMoveType cmt = EXW4M(this, ComboWrapper)->m_pCurrentComboMove->get_ComboMoveType();
-			if (cmt == ComboMoveType::Attack)
+			char * pszScriptClassName = EXW4M(this, ComboWrapper)->m_pCurrentComboMove->m_pInterfaceDef->m_szScriptClassName;
+			switch (cmt)
 			{
+			case ComboMoveType::Attack:
 				output += "IsAttack <";
-				output += EXW4M(this, ComboWrapper)->m_pCurrentComboMove->m_pInterfaceDef->m_szScriptClassName;
+				output += pszScriptClassName;
 				output += ">, ";
-			}
-			else if (cmt == ComboMoveType::MovementAbility)
-			{
+				break;
+			case ComboMoveType::MovementAbility:
 				output += "IsAbility <";
-				output += EXW4M(this, ComboWrapper)->m_pCurrentComboMove->m_pInterfaceDef->m_szScriptClassName;
+				output += pszScriptClassName;
 				output += ">, ";
-			}
-			else if (cmt == ComboMoveType::ComboMove_Any)
-			{
+				break;
+			case ComboMoveType::ComboMove_Any:
 				output += "IsAny <";
-				output += EXW4M(this, ComboWrapper)->m_pCurrentComboMove->m_pInterfaceDef->m_szScriptClassName;
+				output += pszScriptClassName;
 				output += ">, ";
-			}
+				break;
+			default:
+				break;
+
+			}*/
 				
 		}
 	}

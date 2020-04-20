@@ -6,8 +6,10 @@
 #include <limits.h>
 #include "EasyHookUtils.h"
 #include "WOTW.TAS.h"
+#include "ConfigurationManager.h"
 #include <stdlib.h>
 #include <time.h>
+
 
 
 unsigned long g_ACLEntries[1] = { 0 };
@@ -48,15 +50,17 @@ fnScreenToViewportPoint_Injected ScreenToViewportPoint_Injected = (fnScreenToVie
 unsigned long long PlayerInput_FixedUpdate_VA = 0x0;
 void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 {
+	
+	
 	Assembly_BaseAddr = (unsigned long long)GetModuleHandleA("GameAssembly.dll");
 	UnityPlayer_BaseAddr = (unsigned long long)GetModuleHandleA("UnityPlayer.dll");
 
-
 	// Patch GameController::OnApplicationFocus
-	ApplyPatch((Assembly_BaseAddr)+0x49EC5B, "\xFF\xC5\x90");
+	ApplyPatch((Assembly_BaseAddr)+0x49EC5B, "\xFF\xC5\x90", 0x03);
 
-	String::Set(g_pTextAreaString, L"120.0,139.0,32");
-	String::Set(g_pGUIString, L"WILL YOU REMEEEEMBER, ME I WILL REMEEEEMBER YOU");
+	String::Set(g_pTextAreaString, L"Temporary String");
+	String::Set(g_pGUIString, L"Temporary String");
+	String::SetUnknown0(g_pTextAreaString, 1);
 
 	DWORD dwOldProt;
 	VirtualProtect((LPVOID)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA), 8, PAGE_EXECUTE_READWRITE, &dwOldProt);
@@ -83,6 +87,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	g_pSeinCharacter = GetSeinCharacter();
 
 	// Because we have no other way to set it.
+	*(unsigned long long*)(&GUI_Button) = ((Assembly_BaseAddr) + GAMEASSEMBLY_GUIBUTTON_RVA);
 	*(unsigned long long*)(&SeinComboHandler_IsPerformingAttackAbility) = ((Assembly_BaseAddr) + GAMEASSEMBLY_SEINCOMBOHANDLER_ISPERFORMINGATTACKABILITY_RVA);
 	*(unsigned long long*)(&Input_GetMouseButtonUp) = ((UnityPlayer_BaseAddr) + UNITYPLAYER_GETMOUSEBUTTONUP_RVA);
 	*(unsigned long long*)(&InternalDoWindowInjected) = ((UnityPlayer_BaseAddr) + UNITYPLAYER_INTERNALDOWINDOWINJECTED_RVA);
@@ -147,26 +152,10 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	}
 
 
-	/*
-	result = AddHook((void*)(Assembly_BaseAddr + SEINDASHNEW_ONPROCESSROOTMOTION_RVA), SeinDashNew_OnProcessRootMotion_Hook, NULL, &SeinDashNew_OnProcessRootMotion_HookHandle);
-
-	if (FAILED(result))
-	{
-		auto err = RtlGetLastErrorString();
-		DebugOutputW(L"Failed to hook SeinDashNew_OnProcessRootMotion, err=%s", err);
-	}
-	else
-	{
-		DebugOutput("SeinDashNew_OnProcessRootMotion_Hook installed.");
-		ExclusiveHook(&SeinDashNew_OnProcessRootMotion_HookHandle);
-	}*/
-
-
 	g_pPlaybackManager = new PlaybackManager("Ori.rec");
 	g_pPlaybackManager->SetFrameRate(60, true);
 	//*gp_qwUnityEngineTargetFrameRatePtr = g_pPlaybackManager->CurrentFrameRate;
 	DumpPointersForExternalOSD();
-
 }
 
 
@@ -183,7 +172,22 @@ void * __fastcall il2cpp_runtime_invoke_Hook(MethodInfo* pMethodInfo, void* obj,
 	DoOnceBlock("il2cpp_runtime_invoke_Hook, !bOnce");
 	static bool bHookedPlayerInputFixedUpdate = false;
 	static bool bHookedGameController_OnGUI = false;
+	static bool bHookedGameController_Update = false;
 	//static bool bHookedSeinDashNew_OnProcessRootMotion = false;
+
+	if (!bHookedGameController_Update)
+	{
+		std::string className = pMethodInfo->pClass->pcszClassName;
+		std::string methodName = pMethodInfo->pcszMethodName;
+
+		if (className == "GameController" && methodName == "Update")
+		{
+			*(unsigned long long*)(&orig_GameController_Update) = pMethodInfo->methodAddr;
+			pMethodInfo->methodAddr = (unsigned long long)GameController_Update_Hook;
+			DebugOutput("Replaced GameController::Update with hook.");
+			bHookedGameController_Update = true;
+		}
+	}
 
 	if (!bHookedPlayerInputFixedUpdate)
 	{
@@ -223,6 +227,63 @@ void __fastcall WOTW_UnityEngine_PlayerLoopInternal_Hook()
 {
 	DoOnceBlock("WOTW_UnityEngine_PlayerLoopInternal_Hook, !bOnce");
 
+	// ALSO: These keybinds shouldn't work if the keybinds menu is active
+	if (!g_pConfigManager->m_bKeybindsMenuActive)
+	{
+
+		// ------------------------
+		// No grace checks on these
+		// ------------------------
+		if (g_pConfigManager->Pause->CheckKeyWithoutGrace(true))
+		{
+			g_bPaused = !g_bPaused;
+			if (g_bPaused)
+				DebugOutput("Game Paused.");
+			else
+				DebugOutput("Game Unpaused.");
+		}
+
+
+		if (g_pConfigManager->Playback->CheckKeyWithoutGrace(true))
+		{
+			if (g_pPlaybackManager)
+			{
+				if (g_pPlaybackManager->IsPlayingBack())
+				{
+					g_pPlaybackManager->InitPlayback(true);
+				}
+				else
+				{
+					g_pPlaybackManager->InitPlayback(false);
+				}
+			}
+		}
+
+		if (g_pConfigManager->CopyCursor->CheckKeyWithoutGrace(true))
+		{
+			if (g_pPlaybackManager)
+				g_pPlaybackManager->CopyCursorPosition();
+		}
+		
+		if (g_pConfigManager->CopyPosition->CheckKeyWithoutGrace(true))
+		{
+			if (g_pPlaybackManager)
+				g_pPlaybackManager->CopyPlayerPosition();
+		}
+
+		if (g_pConfigManager->CopySpeed->CheckKeyWithoutGrace(true))
+		{
+			if (g_pPlaybackManager)
+				g_pPlaybackManager->CopyPlayerSpeed();
+		}
+	}
+
+	// Not exempt from grace while not paused :)
+	if (g_pConfigManager->ValidTimeToCheckKey() && g_pConfigManager->ToggleOSD->CheckKey(true))
+	{
+		g_bShowOSD = !g_bShowOSD;
+	}
+	/*
 	if (GetAsyncKeyState(VK_F1) & 1)
 	{
 		g_bPaused = !g_bPaused;
@@ -246,32 +307,58 @@ void __fastcall WOTW_UnityEngine_PlayerLoopInternal_Hook()
 			}
 		}
 	}
-
+	
 	if (GetAsyncKeyState(VK_F9) & 1)
 	{
 		g_bShowOSD = !g_bShowOSD;
 		// Read in for g_fDeltaTimeSpoof with something else, this is more useful
-	}
+	}*/
 
-	if (g_bPaused)
+	if(g_bPaused)
 	{
 
-		// VK_OEM_4 = '['
-		// VK_OEM_6 = ']'
+		// can't check if it's a valid time to check the key because timers aren't going to update
+		// while we're paused :)
 
-		if (GetAsyncKeyState(VK_F9) & 1)
-		{
+		// ToggleOSD needs to be checked without grace while we're paused.
+		if (g_pConfigManager->ToggleOSD->CheckKeyWithoutGrace(true))
 			g_bShowOSD = !g_bShowOSD;
-			// Read in for g_fDeltaTimeSpoof with something else, this is more useful
-		}
 
-		if (GetAsyncKeyState(VK_OEM_4) & 1)
+		// Framestep obviously needs to check without grace, it only works while paused.
+		if (g_pConfigManager->Framestep->CheckKeyRaw())
 		{
 			g_bPressedFrameStepThisFrame = true;
 			original_WOTW_UnityEngine_PlayerLoopInternal();
+
+			// Update it all for framestepping.
+			if (g_pPlaybackManager)
+				g_pPlaybackManager->FormatConditonally();
+
 		}
 
+		/*
+		if (g_pConfigManager->Framestep->CheckKeyWithoutGrace(true))
+		{
+			g_bPressedFrameStepThisFrame = true;
+			original_WOTW_UnityEngine_PlayerLoopInternal();
+
+			// Update it all for framestepping.
+			if (g_pPlaybackManager && g_pPlaybackManager->IsPlayingBack())
+				g_pPlaybackManager->PlaybackFormatWithPlayback();
+			else
+			{
+				if (g_pPlaybackManager)
+					g_pPlaybackManager->FormatWithoutPlayback();
+			}
+		}*/
+
 		return;
+	}
+
+	// Update it all when we aren't paused too.
+	if (g_pPlaybackManager)
+	{
+		g_pPlaybackManager->FormatConditonally();
 	}
 
 	return original_WOTW_UnityEngine_PlayerLoopInternal();
@@ -328,20 +415,8 @@ void __fastcall PlayerInput_FixedUpdate_Hook2(unsigned long long __rcx)
 {
 	PlayerInput *pPlayerInput = (PlayerInput*)(__rcx);
 
-	static bool bGotCommandProcessors = false;
-
-	if (!bGotCommandProcessors)
-	{
-		DebugOutput("FUH2: ScriptName=%s, ModuleName=%s", pPlayerInput->m_pMetaData->m_szScriptName,
-			pPlayerInput->m_pMetaData->m_pModuleMetaData->m_szModuleName);
-
-		bGotCommandProcessors = true;
-	}
-
-
 	if (!pPlayerInput->m_bActive)
 		return;
-
 
 	// wut? lol
 	if (!g_pPlaybackManager)
@@ -349,6 +424,10 @@ void __fastcall PlayerInput_FixedUpdate_Hook2(unsigned long long __rcx)
 
 
 	Core_Input * pCoreInput = GetCoreInputInstance();
+	
+	if (!pCoreInput)
+		original_PlayerInputFixedUpdate(__rcx);
+
 	// COME ON, MAN.
 	g_pCoreInput = pCoreInput;
 
@@ -356,7 +435,7 @@ void __fastcall PlayerInput_FixedUpdate_Hook2(unsigned long long __rcx)
 	if (!g_pPlaybackManager->IsPlayingBack())
 	{
 		// For printing crap when we aren't playing back
-		g_pPlaybackManager->FormatWithoutPlayback();
+		//g_pPlaybackManager->FormatWithoutPlayback();
 		return original_PlayerInputFixedUpdate(__rcx);
 	}
 
@@ -427,9 +506,9 @@ void ApplyNops(unsigned long long addr, unsigned int n)
 		pAddr[i] = 0x90;
 }
 
-void ApplyPatch(unsigned long long addr, const char * bytes)
+void ApplyPatch(unsigned long long addr, const char * bytes, unsigned int n)
 {
-	unsigned int len = sizeof(bytes) / sizeof(bytes[0]);
+	unsigned int len = n;
 	unsigned long dwOldProt = 0x0;
 
 	VirtualProtect((LPVOID)addr, len, PAGE_EXECUTE_READWRITE, &dwOldProt);

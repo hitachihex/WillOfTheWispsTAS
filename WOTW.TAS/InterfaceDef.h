@@ -14,6 +14,29 @@ public:
 protected:
 private:
 };
+
+class InterfaceDefinition
+{
+public:
+
+	// 0x0018 - 0x00AF
+	unsigned char uc_Unk0000_00AF[0xB0 - 0x18];
+
+	// 0x00B0 - 0x00B7
+	InheritanceChain * m_pInheritanceChain;
+
+	// 0x00B8 - 0x011D
+	unsigned char uc_Unk00B8_011D[0x11E - 0xB8];
+
+	// 0x011E - 0x011F
+	unsigned short m_nInheritedByCount;
+
+	// 0x0120 - 0x0127
+	unsigned long long m_qwUnk0120_0127;
+protected:
+private:
+};
+
 class InterfaceDef
 {
 public:

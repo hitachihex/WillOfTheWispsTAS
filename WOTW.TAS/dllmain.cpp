@@ -7,7 +7,6 @@
 void MainThread()
 {
 
-	//DumpPointersForExternalOSD();
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,

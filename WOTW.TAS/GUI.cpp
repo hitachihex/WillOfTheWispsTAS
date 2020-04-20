@@ -17,6 +17,8 @@ fnGUILayout_LabelWithOptions GUILayout_LabelWithOptions = (fnGUILayout_LabelWith
 fnGUILayout_EndArea GUILayout_EndArea = (fnGUILayout_EndArea)(0x0);
 fnGUILabel_ContentAndStyle GUILabel_ContentAndStyle = (fnGUILabel_ContentAndStyle)(0x0);
 fnGUI_TextArea GUI_TextArea = (fnGUI_TextArea)(0x0);
+fnGUI_Button GUI_Button = (fnGUI_Button)(0x0);
+
 fnInternalDoWindowInjected InternalDoWindowInjected = (fnInternalDoWindowInjected)(0x0);
 Rect *g_pPositionForWindow = new Rect(20.0f, 20.0f, 120.0f, 50.0f);
 //00007FFFD52D184D | 48:8B0D 2423F303 | mov rcx,qword ptr ds:[7FFFD9203B78] | ; GUILayoutOptions -- default

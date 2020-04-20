@@ -159,6 +159,7 @@
     <ClInclude Include="Cmd.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="CompoundButtonInput.h" />
+    <ClInclude Include="ConfigurationManager.h" />
     <ClInclude Include="Core_Input.h" />
     <ClInclude Include="EasyHookUtils.h" />
     <ClInclude Include="EverythingNeedsMe.h" />
@@ -170,13 +171,16 @@
     <ClInclude Include="GUI.h" />
     <ClInclude Include="GuidOwner.h" />
     <ClInclude Include="GUILayoutOption.h" />
+    <ClInclude Include="IComboMove.h" />
     <ClInclude Include="IL2CPPDefs.h" />
+    <ClInclude Include="IniParser.h" />
     <ClInclude Include="InputButtonProcessorTypedefs.h" />
     <ClInclude Include="InputRecord.h" />
     <ClInclude Include="InstantLoadScenesController.h" />
     <ClInclude Include="InterfaceDef.h" />
     <ClInclude Include="IsOnCollisionState.h" />
     <ClInclude Include="MeleeWeapon.h" />
+    <ClInclude Include="MethodTable.h" />
     <ClInclude Include="MonoBehaviour.h" />
     <ClInclude Include="MoonAnimator.h" />
     <ClInclude Include="MoonEnums.h" />
@@ -208,11 +212,14 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UI_Cameras.h" />
     <ClInclude Include="UnityAnimator.h" />
+    <ClInclude Include="UnityButton.h" />
     <ClInclude Include="UnityEngineBehavour.h" />
+    <ClInclude Include="UnityEngineEvent.h" />
     <ClInclude Include="UnityEngine_Camera.h" />
     <ClInclude Include="UnityEngine_Input.h" />
     <ClInclude Include="UnityEngine_PhysicsSettings.h" />
     <ClInclude Include="UnityPlayer.h" />
+    <ClInclude Include="UnityTextArea.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
@@ -221,6 +228,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cmd.cpp" />
+    <ClCompile Include="ConfigurationManager.cpp" />
     <ClCompile Include="Core_Input.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="EasyHookUtils.cpp" />
@@ -229,6 +237,7 @@
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameSettings.cpp" />
     <ClCompile Include="GUI.cpp" />
+    <ClCompile Include="IniParser.cpp" />
     <ClCompile Include="InstantLoadScenesController.cpp" />
     <ClCompile Include="PlaybackManager.cpp" />
     <ClCompile Include="QualitySettings.cpp" />
@@ -248,6 +257,7 @@
     </ClCompile>
     <ClCompile Include="UI_Cameras.cpp" />
     <ClCompile Include="UnityAnimator.cpp" />
+    <ClCompile Include="UnityEngineEvent.cpp" />
     <ClCompile Include="UnityEngine_Input.cpp" />
     <ClCompile Include="UnityPlayer.cpp" />
     <ClCompile Include="WOTW.TAS.cpp" />

@@ -83,7 +83,10 @@ public:
 
 	void SetFrameRate(unsigned int, bool);
 
-	inline void PlaybackFormatAll();
+	void FormatConditonally();
+
+	void FormatWithPlayback();
+
 	void FormatWithoutPlayback();
 
 	std::string m_CWD;
@@ -107,6 +110,10 @@ public:
 
 	unsigned long m_CurrentSeed;
 
+	void CopyCursorPosition();
+	void CopyPlayerPosition();
+	void CopyPlayerSpeed();
+	void CopyToClipboard(std::string);
 #pragma endregion
 
 protected:
@@ -135,6 +142,10 @@ private:
 	XINPUT_STATE * m_pGamePadState;
 
 	char m_szCurrentDirectory[256];
+
+	std::string m_CursorPos;
+	std::string m_PlayerPos;
+	std::string m_PlayerSpeed;
 };
 
 extern PlaybackManager * g_pPlaybackManager;

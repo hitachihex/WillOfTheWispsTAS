@@ -32,6 +32,16 @@ public:
 	// 0x0014 - 
 	wchar_t m_wszBytes[512 * 4];
 
+	static void SetUnknown0(String *ref, unsigned long long value)
+	{
+		ref->m_qwUnk0000_0007 = value;
+	}
+
+	static void SetUnknown1(String * ref, unsigned long long value)
+	{
+		ref->m_qwUnk0008_000F = value;
+	}
+
 	static void Set(String* ref, const wchar_t* newBytes)
 	{
 		ref->m_nLength = ua_wcslen(newBytes) + 1;

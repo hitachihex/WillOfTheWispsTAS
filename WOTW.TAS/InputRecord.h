@@ -185,7 +185,7 @@ public:
 			result += ",Unpause";
 
 		if (this->IsSelect())
-			result + ",OpenMapInventory";
+			result += ",OpenMapInventory";
 
 		if (this->IsMenuLeft())
 			result += ",MenuLeft";
@@ -386,6 +386,7 @@ public:
 
 	t_InputRecord(std::string line, unsigned int ln)
 	{
+		this->m_InputState = EInputState::DEFAULT_NONE;
 		this->MousePosX = 0.0f;
 		this->MousePosY = 0.0f;
 		this->HasMouse = false;

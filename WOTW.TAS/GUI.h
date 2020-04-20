@@ -34,6 +34,8 @@
 //.text:00007FFFECA159F0 unityplayer.dll:$3559F0 #354DF0
 #define UNITYPLAYER_INTERNALDOWINDOWINJECTED_RVA 0x3559F0
 
+#define GAMEASSEMBLY_GUIBUTTON_RVA 0x27ED680
+
 #pragma pack(push, 1)
 
 typedef struct t_Rect
@@ -264,6 +266,9 @@ extern fnGUILabel_ContentAndStyle GUILabel_ContentAndStyle;
 
 typedef String*(__fastcall * fnGUI_TextArea)(Rect*, String*);
 extern fnGUI_TextArea GUI_TextArea;
+
+typedef bool(__fastcall * fnGUI_Button)(Rect*, String*);
+extern fnGUI_Button GUI_Button;
 
 
 typedef Rect*(__fastcall * fnInternalDoWindowInjected)(int, int, Rect*, unsigned long long*, GUIContent*, GUIStyle*, GUISkin*, bool);
