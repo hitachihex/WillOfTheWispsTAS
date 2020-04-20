@@ -34,6 +34,7 @@
 .vs/
 *.ipch
 *.db
+*.idb
 *.opendb
 *.db-shm
 *.db-wal
@@ -44,5 +45,8 @@
 *.iobj
 *.ipdb
 *.pdb
-WOTW.TAS/x64/Release/vc141.pdb
 *.iobj
+*.ilk
+*.log
+*.lastbuildstate
+*.suo
