@@ -102,19 +102,16 @@ void __fastcall GameController_OnGUI_Hook()
 			// so shift will require checking the modifier, also don't check it inside
 			// up or down events
 			if (pCurrentEvent->m_pInternal->m_Modifiers & EEventModifiers::SHIFT)
-			{
 				bShiftDown = true;
-			}
 
 			if (pCurrentEvent->m_pInternal->m_Type == EEventType::KEYDOWN || pCurrentEvent->m_pInternal->m_Type == EEventType::MOUSEDOWN)
 			{
 				bool isMouseEvent = pCurrentEvent->m_pInternal->m_Type == EEventType::MOUSEDOWN;
-				unsigned short keyCode = 0xFFFF;
-				if (isMouseEvent)
-					keyCode = pCurrentEvent->m_pInternal->m_MouseButton & 0xFFFF;
-				else
-					keyCode = pCurrentEvent->m_pInternal->m_Keycode;
+				unsigned short keyCode = (isMouseEvent) ? (pCurrentEvent->m_pInternal->m_MouseButton & 0xFFFF) : pCurrentEvent->m_pInternal->m_Keycode;
 
+				// Why is this here, didn't we check null above?
+				// This isn't multithreaded execution, right?
+				// Did I encounter a crash :thinking:
 				if (pButtonKey)
 				{
 					if (keyCode == UKC::UKC_Escape)
@@ -133,8 +130,10 @@ void __fastcall GameController_OnGUI_Hook()
 
 					// NOTE: This needs to be down here, because we've excluded the modifier keys from the map.
 					// Although, couldn't we just ret with this and !IsAnyModifierKey(kc, &pb, &pb) ?
+					// ^^ what about breakLoop(false,true) then?
+					// Methinks this is a little convoluted, by design (my design.)
 					
-					// NOTE2: Log this so we can add the unity keycode because we've certainly not added everythig?
+					// NOTE2: Log this so we can add the unity keycode because we've certainly not added everything?
 					if (pKey == keyMap.end())
 					{
 						breakLoop(false, true);
@@ -230,7 +229,6 @@ void __fastcall GameController_OnGUI_Hook()
 
 					// Reset these for next time we try to change some modifiers for another key
 					breakLoop(false, false);
-
 
 				}
 
