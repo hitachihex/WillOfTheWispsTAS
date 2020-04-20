@@ -186,6 +186,9 @@ public:
 		if (this->IsAbilityThree())
 			result += ",Ability3";
 
+		if (this->IsAbilityWheel())
+			result += ",AbilityWheel";
+
 		if (this->IsStart())
 			result += ",Start";
 
@@ -203,6 +206,19 @@ public:
 
 		if (this->IsOpenInventory())
 			result += ",OpenInventory";
+
+		if (this->IsAdvanceDialogue())
+			result += ",Talk";
+
+		if (this->IsOption1())
+			result += ",Option1";
+
+		if(this->IsOption2())
+			result += ",Option2";
+
+		if (this->IsOption3())
+			result += ",Option3";
+
 		return result;
 	}
 
