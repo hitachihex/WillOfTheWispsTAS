@@ -35,6 +35,7 @@ void __fastcall GameController_OnGUI_Hook()
 	static bool bCtrlDown = false;
 	static bool bAltDown = false;
 
+	auto breakLoop = [](bool a, bool b) { bAltDown = false; bCtrlDown = false; bAltDown = false; g_pConfigManager->DeactivateAll(a, b); };
 	Rect r(g_fCurrentOSDXPosition, g_fCurrentOSDYPosition, 1920.0f, 1080.0f);
 	UnityEngine_Input * pUnityEngineInput = GetUnityEngine_Input();
 	Vector3 mousePos(pUnityEngineInput->m_fMouseX, pUnityEngineInput->m_fMouseY);
@@ -119,152 +120,118 @@ void __fastcall GameController_OnGUI_Hook()
 					if (keyCode == UKC::UKC_Escape)
 					{
 						// Reset these for next time we try to change some modifiers for another key
-						bAltDown = false;
-						bCtrlDown = false;
-						bShiftDown = false;
-
 						// Don't update key, let the manager know we escaped out of a bind set action.
-						g_pConfigManager->DeactivateAll(false, true);
+						breakLoop(false, true);
 						return;
 					}
 
 					auto pKey = keyMap.find(keyCode);
 
-					if (IsAnyModifierKey(keyCode,&bCtrlDown,&bAltDown))
+					// Safe to ret here, because we would've returned anyways, statics will retain states.
+					if (IsAnyModifierKey(keyCode, &bCtrlDown, &bAltDown))
+						return;
+
+					// NOTE: This needs to be down here, because we've excluded the modifier keys from the map.
+					// Although, couldn't we just ret with this and !IsAnyModifierKey(kc, &pb, &pb) ?
+					
+					// NOTE2: Log this so we can add the unity keycode because we've certainly not added everythig?
+					if (pKey == keyMap.end())
 					{
-						// lol, this looks silly, but it should be better
+						breakLoop(false, true);
+						return;
 					}
-					else
+
+					// we're rebinding Framestep right now, make sure it's not trying to be bound to Pause :p
+					if (pButtonKey->m_nIndex == FRAMESTEP_INDEX)
 					{
-						// Wasn't found, what are you pressing?
-						if (pKey == keyMap.end())
+						auto pauseKeycode = g_pConfigManager->Pause->GetKey()->uUnityKeycode;
+						if (pauseKeycode == pKey->second->uUnityKeycode)
 						{
-							bAltDown = false;
-							bCtrlDown = false;
-							bShiftDown = false;
-							g_pConfigManager->DeactivateAll(false, true);
+							breakLoop(false, true);
 							return;
 						}
-
-						// we're rebinding Framestep right now, make sure it's not trying to be bound to Pause :p
-						if (pButtonKey->m_nIndex == FRAMESTEP_INDEX)
-						{
-							auto pauseKeycode = g_pConfigManager->Pause->GetKey()->uUnityKeycode;
-							if (pauseKeycode == pKey->second->uUnityKeycode)
-							{
-								bAltDown = false;
-								bCtrlDown = false;
-								bShiftDown = false;
-								g_pConfigManager->DeactivateAll(false, true);
-
-								return;
-							}
-						}
-
-						// we're rebinding Pause right now, make sure it's not trying to be bound to Framestep :p
-						if (pButtonKey->m_nIndex == PAUSE_INDEX)
-						{
-							auto framestepKeycode = g_pConfigManager->Framestep->GetKey()->uUnityKeycode;
-
-							if (framestepKeycode == pKey->second->uUnityKeycode)
-							{
-								bAltDown = false;
-								bCtrlDown = false;
-								bShiftDown = false;
-								g_pConfigManager->DeactivateAll(false, true);
-
-								return;
-							}
-						}
-
-						// Not binding Pause, see if we're trying to bind other things to what Pause is
-						if (pButtonKey->m_nIndex != PAUSE_INDEX)
-						{
-							auto pauseKeycode = g_pConfigManager->Pause->GetKey()->uUnityKeycode;
-
-							if (pKey->second->uUnityKeycode == pauseKeycode)
-							{
-								bAltDown = false;
-								bCtrlDown = false;
-								bShiftDown = false;
-								g_pConfigManager->DeactivateAll(false, true);
-
-								return;
-							}
-						}
-
-						// Not binding Framestep, see if we're trying to bind other things to what Framestep is
-						if (pButtonKey->m_nIndex != FRAMESTEP_INDEX)
-						{
-							auto frameStepKeycode = g_pConfigManager->Framestep->GetKey()->uUnityKeycode;
-							if (pKey->second->uUnityKeycode == frameStepKeycode)
-							{
-								bAltDown = false;
-								bCtrlDown = false;
-								bShiftDown = false;
-								g_pConfigManager->DeactivateAll(false, true);
-
-								return;
-							}
-						}
-
-						// Not binding ToggleConfigActive, see if we're trying to bind other things to what ToggleConfigActive is
-						if (pButtonKey->m_nIndex != SHOWCONFIG_INDEX)
-						{
-							auto toggleConfigActiveKeycode = g_pConfigManager->ToggleConfigActive->GetKey()->uUnityKeycode;
-
-							if (pKey->second->uUnityKeycode == toggleConfigActiveKeycode)
-							{
-								bAltDown = false;
-								bCtrlDown = false;
-								bShiftDown = false;
-								g_pConfigManager->DeactivateAll(false, true);
-
-								return;
-							}
-						}
-
-						// We're binding ToggleConfigActive, see if we're trying to bind this to what other things are
-						if (pButtonKey->m_nIndex == SHOWCONFIG_INDEX)
-						{
-							if (g_pConfigManager->CheckAnnoyingCombinations(pKey->second->uUnityKeycode))
-							{
-								bAltDown = false;
-								bCtrlDown = false;
-								bShiftDown = false;
-								g_pConfigManager->DeactivateAll(false, true);
-
-								return;
-							}
-						}
-
-						/* Right now, with the way this works, you can't have a mouse
-						   and a keyboard key bound together, or multi-'main' keycodes.
-						   I'm sorry, I didn't feel like redoing everything after I noticed my mistake!
-
-						   This is better than hardcoding everything, at least :)
-						   */
-
-
-						   // Set the modifiers
-						pButtonKey->m_bTransitiveAlt = bAltDown;
-						pButtonKey->m_bTransitiveCtrl = bCtrlDown;
-						pButtonKey->m_bTransitiveShift = bShiftDown;
-
-						// Set the new key.
-						pButtonKey->SafeSetKey(pKey->second, true);
-
-						// Update the keybind
-						g_pConfigManager->UpdateKeybind(pButtonKey);
-
-						// Reset these for next time we try to change some modifiers for another key
-						bAltDown = false;
-						bCtrlDown = false;
-						bShiftDown = false;
-
-						g_pConfigManager->DeactivateAll();
-
 					}
+
+					// we're rebinding Pause right now, make sure it's not trying to be bound to Framestep :p
+					if (pButtonKey->m_nIndex == PAUSE_INDEX)
+					{
+						auto framestepKeycode = g_pConfigManager->Framestep->GetKey()->uUnityKeycode;
+
+						if (framestepKeycode == pKey->second->uUnityKeycode)
+						{
+							breakLoop(false, true);
+							return;
+						}
+					}
+
+					// Not binding Pause, see if we're trying to bind other things to what Pause is
+					if (pButtonKey->m_nIndex != PAUSE_INDEX)
+					{
+						auto pauseKeycode = g_pConfigManager->Pause->GetKey()->uUnityKeycode;
+
+						if (pKey->second->uUnityKeycode == pauseKeycode)
+						{
+							breakLoop(false, true);
+							return;
+						}
+					}
+
+					// Not binding Framestep, see if we're trying to bind other things to what Framestep is
+					if (pButtonKey->m_nIndex != FRAMESTEP_INDEX)
+					{
+						auto frameStepKeycode = g_pConfigManager->Framestep->GetKey()->uUnityKeycode;
+						if (pKey->second->uUnityKeycode == frameStepKeycode)
+						{
+							breakLoop(false, true);
+							return;
+						}
+					}
+
+					// Not binding ToggleConfigActive, see if we're trying to bind other things to what ToggleConfigActive is
+					if (pButtonKey->m_nIndex != SHOWCONFIG_INDEX)
+					{
+						auto toggleConfigActiveKeycode = g_pConfigManager->ToggleConfigActive->GetKey()->uUnityKeycode;
+
+						if (pKey->second->uUnityKeycode == toggleConfigActiveKeycode)
+						{
+							breakLoop(false, true);
+							return;
+						}
+					}
+
+					// We're binding ToggleConfigActive, see if we're trying to bind this to what other things are
+					if (pButtonKey->m_nIndex == SHOWCONFIG_INDEX)
+					{
+						if (g_pConfigManager->CheckAnnoyingCombinations(pKey->second->uUnityKeycode))
+						{
+							breakLoop(false, true);
+							return;
+						}
+					}
+
+					/* Right now, with the way this works, you can't have a mouse
+					   and a keyboard key bound together, or multi-'main' keycodes.
+					   I'm sorry, I didn't feel like redoing everything after I noticed my mistake!
+
+					   This is better than hardcoding everything, at least :)
+					   */
+
+
+					   // Set the modifiers
+					pButtonKey->m_bTransitiveAlt = bAltDown;
+					pButtonKey->m_bTransitiveCtrl = bCtrlDown;
+					pButtonKey->m_bTransitiveShift = bShiftDown;
+
+					// Set the new key.
+					pButtonKey->SafeSetKey(pKey->second, true);
+
+					// Update the keybind
+					g_pConfigManager->UpdateKeybind(pButtonKey);
+
+					// Reset these for next time we try to change some modifiers for another key
+					breakLoop(false, false);
+
+
 				}
 
 			}
