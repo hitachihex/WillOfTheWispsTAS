@@ -39,3 +39,7 @@
 *.db-wal
 *.sqlite
 *.json
+*.pdb
+*.tlog
+*.iobj
+*.ipdb
