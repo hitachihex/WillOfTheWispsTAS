@@ -29,11 +29,11 @@ F9 - Toggle display of in-game OSD
 Ctrl + Right click -  to move top left corner of in-game OSD to cursor location in-game.
 
 
-Ctrl + Numpad 1 - Copy cursor position to clipboard
+Ctrl + Numpad 1 - Copy ingame cursor position to clipboard (delimited by comma: x,y and as you see it in Buggy\ingame OSD)
 
-Ctrl + Numpad 2 - Copy player position to clipboard
+Ctrl + Numpad 2 - Copy player position to clipboard (delimited by comma: x,y)
 
-Ctrl + Numpad 3 - Copy player speed to clipboard
+Ctrl + Numpad 3 - Copy player speed to clipboard ( delimited by comma: x,y)
 
 --------------------------------------------------------
 
