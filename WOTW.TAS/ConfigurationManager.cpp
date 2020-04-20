@@ -3,23 +3,57 @@
 
 ConfigurationManager * g_pConfigManager = new ConfigurationManager();
 
-bool IsAnyModifierKey(unsigned short uKc)
+bool IsAnyModifierKey(unsigned short uKc, bool * pCtrlOut, bool *pAltOut)
 {
 	bool isModifier = false;
 	switch (uKc)
 	{
-	//case UKC::LeftShift:
-	//case UKC::RightShift:
 	case UKC::LeftCtrl:
 	case UKC::RightCtrl:
+		*pCtrlOut = true;
+		isModifier = true;
+		break;
 	case UKC::LeftAlt:
 	case UKC::RightAlt:
+		*pAltOut = true;
 		isModifier = true;
 		break;
 
 	}
 
 	return isModifier;
+}
+
+bool IsCtrlModifier(unsigned short kc)
+{
+	bool result = false;
+	switch (kc)
+	{
+	case UKC::LeftCtrl:
+	case UKC::RightCtrl:
+		result = true;
+		break;
+	default:
+		break;
+	}
+
+	return result;
+}
+
+bool IsAltModifier(unsigned short kc)
+{
+	bool result = false;
+	switch (kc)
+	{
+	case UKC::LeftAlt:
+	case UKC::RightAlt:
+		result = true;
+		break;
+	default:
+		break;
+	}
+
+	return result;
 }
 
 void ConfigurationManager::UpdateKeybind(ButtonKey* pButtonKey)

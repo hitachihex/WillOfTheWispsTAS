@@ -130,12 +130,9 @@ void __fastcall GameController_OnGUI_Hook()
 
 					auto pKey = keyMap.find(keyCode);
 
-					if (IsAnyModifierKey(keyCode))
+					if (IsAnyModifierKey(keyCode,&bCtrlDown,&bAltDown))
 					{
-						if (keyCode == UKC::LeftAlt || keyCode == UKC::RightAlt)
-							bAltDown = true;
-						else if (keyCode == UKC::LeftCtrl || keyCode == UKC::RightCtrl)
-							bCtrlDown = true;
+						// lol, this looks silly, but it should be better
 					}
 					else
 					{

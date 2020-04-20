@@ -911,6 +911,9 @@ private:
 	
 };
 
-extern bool IsAnyModifierKey(unsigned short);
+extern bool IsCtrlModifier(unsigned short);
+extern bool IsAltModifier(unsigned short);
+
+extern bool IsAnyModifierKey(unsigned short, bool*, bool*);
 //extern Key *
 extern Key * Framestep;
