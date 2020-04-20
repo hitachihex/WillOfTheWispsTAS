@@ -81,7 +81,15 @@ enum EInputState
 
 	PAGELEFT             = 1 << 21,
 
-	PAGERIGHT            = 1 << 22
+	PAGERIGHT            = 1 << 22,
+
+	ADV_DIALOGUE         = 1 << 23,
+
+	OPTION1              = 1 << 24,
+
+	OPTION2              = 1 << 25,
+
+	OPTION3              = 1 << 26,
 
 };
 
@@ -366,6 +374,26 @@ public:
 		return this->HasFlag(this->m_InputState, EInputState::OPENINVENTORY);
 	}
 
+	bool IsAdvanceDialogue()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::ADV_DIALOGUE);
+	}
+
+	bool IsOption1()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::OPTION1);
+	}
+
+	bool IsOption2()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::OPTION2);
+	}
+
+	bool IsOption3()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::OPTION3);
+	}
+
 	bool IsMenuLeft()
 	{
 		return this->HasFlag(this->m_InputState, EInputState::PAGELEFT);
@@ -545,6 +573,30 @@ public:
 				{
 					this->Jump = true;
 					TempState |= EInputState::JUMP;
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "TALK" || token == "ADVANCEDIALOGUE" || token == "DIALOGUE")
+				{
+					TempState |= EInputState::ADV_DIALOGUE;
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "Option1" || token == "Choose1")
+				{
+					TempState |= EInputState::OPTION1;
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "Option2" || token == "Choose2")
+				{
+					TempState |= EInputState::OPTION2;
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "Option3" || token == "Choose3")
+				{
+					TempState |= EInputState::OPTION3;
 					bWasValidToken = true;
 					continue;
 				}
