@@ -29,3 +29,13 @@
 # Executables
 *.out
 *.app
+
+# Vs active stuff
+.vs/
+*.ipch
+*.db
+*.opendb
+*.db-shm
+*.db-wal
+*.sqlite
+*.json
