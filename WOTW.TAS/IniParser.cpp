@@ -166,8 +166,30 @@ bool KeybindINIParser::LoadAllMappedValues()
 	return true;
 }
 
+bool KeybindINIParser::CreateDefaultFromMetaInfo(KeybindDefaultMetaInfo* pDefault)
+{
+
+	this->WriteKeyValue(pDefault->SectionName, L"UnityKeycode", std::to_wstring(pDefault->Keycode));
+	this->WriteKeyValue(pDefault->SectionName, L"Shift", std::to_wstring(pDefault->bShift));
+	this->WriteKeyValue(pDefault->SectionName, L"Ctrl", std::to_wstring(pDefault->bCtrl));
+	this->WriteKeyValue(pDefault->SectionName, L"Alt", std::to_wstring(pDefault->bAlt));
+
+	return true;
+}
+
 bool KeybindINIParser::CreateDefault()
 {
+	this->CreateDefaultFromMetaInfo(&this->m_FramestepDefault);
+	this->CreateDefaultFromMetaInfo(&this->m_PauseDefault);
+	this->CreateDefaultFromMetaInfo(&this->m_PlaybackDefault);
+	this->CreateDefaultFromMetaInfo(&this->m_ShowConfigDefault);
+	this->CreateDefaultFromMetaInfo(&this->m_ShowOSDDefault);
+	this->CreateDefaultFromMetaInfo(&this->m_MoveOSDDefault);
+	this->CreateDefaultFromMetaInfo(&this->m_CopyCursorDefault);
+	this->CreateDefaultFromMetaInfo(&this->m_CopyPosDefault);
+	this->CreateDefaultFromMetaInfo(&this->m_CopySpeedDefault);
+
+	/*
 	this->WriteKeyValue(L"Framestep", L"UnityKeycode", L"91");
 	this->WriteKeyValue(L"Framestep", L"Shift", L"0");
 	this->WriteKeyValue(L"Framestep", L"Ctrl", L"0");
@@ -211,7 +233,7 @@ bool KeybindINIParser::CreateDefault()
 	this->WriteKeyValue(L"CopySpeed", L"UnityKeycode", L"259");
 	this->WriteKeyValue(L"CopySpeed", L"Shift", L"0");
 	this->WriteKeyValue(L"CopySpeed", L"Ctrl", L"1");
-	this->WriteKeyValue(L"CopySpeed", L"Alt", L"0");
+	this->WriteKeyValue(L"CopySpeed", L"Alt", L"0");*/
 
 	return true;
 }

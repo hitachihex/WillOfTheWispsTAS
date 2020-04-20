@@ -69,6 +69,7 @@ class KeybindINIParser : public IniParser
 public:
 	KeybindINIParser();
 
+	bool CreateDefaultFromMetaInfo(KeybindDefaultMetaInfo*);
 	bool CreateDefault();
 
 	bool LoadKeybindIntoMap(KeybindDefaultMetaInfo*);
