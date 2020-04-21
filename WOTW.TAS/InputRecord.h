@@ -91,6 +91,8 @@ enum EInputState
 
 	OPTION3              = 1 << 26,
 
+	IINTERACT            = 1 << 27
+
 };
 
 typedef struct t_InputRecord
@@ -221,6 +223,9 @@ public:
 		if (this->IsOption3())
 			result += ",Option3";
 
+		if (this->IsInteract())
+			result += ",Interact";
+
 		return result;
 	}
 
@@ -316,6 +321,11 @@ public:
 	bool IsSlow()
 	{
 		return this->HasFlag(this->m_InputState, EInputState::SLOWDOWN);
+	}
+
+	bool IsInteract()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::IINTERACT);
 	}
 
 	bool IsJump()
@@ -569,6 +579,12 @@ public:
 				else if (token == "UBERLOAD")
 				{
 					this->HasUberLoad = true;
+					bWasValidToken = true;
+					continue;
+				}
+				else if (token == "INTERACT")
+				{
+					TempState |= EInputState::IINTERACT;
 					bWasValidToken = true;
 					continue;
 				}

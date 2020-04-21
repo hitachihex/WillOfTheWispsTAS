@@ -480,6 +480,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		pCmd->MenuSelect->Update(m_pCurrentInput->IsJump());
 		pCmd->OpenPauseScreen->Update(m_pCurrentInput->IsStart());
 		pCmd->Jump->Update(m_pCurrentInput->IsJump());
+		pCmd->Interact->Update(m_pCurrentInput->IsInteract());
 
 		pCmd->DialogueAdvance->Update(m_pCurrentInput->IsAdvanceDialogue());
 		pCmd->DialogueOption1->Update(m_pCurrentInput->IsOption1());

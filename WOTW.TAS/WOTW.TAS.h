@@ -19,6 +19,7 @@
 #include "Cmd.h"
 #include "Screen.h"
 #include "SeinComboHandler.h"
+#include "UberStateController.h"
 //#include "RestrictAbilityController.h"
 #include <Xinput.h>
 

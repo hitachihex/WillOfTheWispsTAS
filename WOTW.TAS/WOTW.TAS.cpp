@@ -68,6 +68,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	*(unsigned long long*)(&original_il2cpp_runtime_invoke) = *(unsigned long long*)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA);
 	*(unsigned long long*)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA) = (unsigned long long)il2cpp_runtime_invoke_Hook;
 
+	g_qwUberStateControllerInstancePtr = ((Assembly_BaseAddr) + GAMEASSEMBLY_UBERSTATECONTROLLER_INSTANCE_RVA);
 	g_qwGUILayoutOptionsDefaultInstance = ((Assembly_BaseAddr)+GAMEASSEMBLY_GUILAYOUTOPTIONSINSTANCE_DEFAULT_RVA);
 	g_qwGUIInstancePtr = ((Assembly_BaseAddr)+GAMEASSEMBLY_GUIINSTANCE_RVA);
 	gqw_CmdInstancePtr = ((Assembly_BaseAddr)+GAMEASSEMBLY_CMDINSTANCE_PTR_RVA);

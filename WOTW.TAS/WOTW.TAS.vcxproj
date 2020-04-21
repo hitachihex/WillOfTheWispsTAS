@@ -210,6 +210,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="String.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UberStateController.h" />
     <ClInclude Include="UI_Cameras.h" />
     <ClInclude Include="UnityAnimator.h" />
     <ClInclude Include="UnityButton.h" />
@@ -255,6 +256,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="UberStateController.cpp" />
     <ClCompile Include="UI_Cameras.cpp" />
     <ClCompile Include="UnityAnimator.cpp" />
     <ClCompile Include="UnityEngineEvent.cpp" />

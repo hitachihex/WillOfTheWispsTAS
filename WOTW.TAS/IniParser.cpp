@@ -3,7 +3,7 @@
 #include "EasyHookUtils.h"
 
 
-IniParser::IniParser()
+IniParser::IniParser(std::wstring configFileName)
 {
 	this->m_bFileExists = false;
 	this->m_Fp = nullptr;
@@ -16,7 +16,7 @@ IniParser::IniParser()
 	this->m_CWD += L"\\";
 	this->m_FilePath = this->m_CWD;
 	this->m_FileName = this->m_FilePath;
-	this->m_FileName += L"Config.ini";
+	this->m_FileName += configFileName;
 
 	// alright, if we have a null file pointer then we should default everything.
 	this->m_Fp = _wfsopen(this->m_FileName.c_str(), L"r", _SH_DENYNO);
@@ -73,20 +73,39 @@ unsigned int IniParser::ReadKeyValueUINT(std::wstring sectionName, std::wstring 
 	return GetPrivateProfileIntW(sectionName.c_str(), keyName.c_str(), defaultValue, this->m_FileName.c_str());
 }
 
-
-// ----------
-KeybindINIParser::KeybindINIParser() : IniParser()
+void IniParser::ReadKeyValueString(std::wstring sectionName, std::wstring keyName, std::wstring c)
 {
-	m_FramestepDefault.Set(L"Framestep", 91, false, false, false);
-	m_PauseDefault.Set(L"Pause", 282, false, false, false);
-	m_PlaybackDefault.Set(L"Playback", 285, false, false, false);
-	m_ShowConfigDefault.Set(L"ShowConfig", 289, false, false, false);
-	m_ShowOSDDefault.Set(L"ShowOSD", 290, false, false, false);
+	return;
+	//GetPrivateProfileStringW(sectionName, keyName,)
+}
 
-	m_MoveOSDDefault.Set(L"MoveOSD", 1, false, true, false);
-	m_CopyCursorDefault.Set(L"CopyCursor", 257, false, true, false);
-	m_CopyPosDefault.Set(L"CopyPos", 258, false, true, false);
-	m_CopySpeedDefault.Set(L"CopySpeed", 259, false, true, false);
+/*PlaybackConfigINIParser();
+	bool CreateDefault();
+	bool LoadAllMappedValues();*/
+
+PlaybackConfigINIParser::PlaybackConfigINIParser() : IniParser(L"PlaybackConfig.ini")
+{
+	this->m_RuntoSpeed.Set(L"PlaybackSettings", L"RuntoSpeed", L"300");
+	this->m_Timescale.Set(L"PlaybackSettings", L"Timescale", L"1.0");
+
+	if (!this->m_bFileExists)
+		this->CreateDefault();
+
+	this->LoadAllMappedValues();
+}
+// ----------
+KeybindINIParser::KeybindINIParser() : IniParser(L"Config.ini")
+{
+	this->m_FramestepDefault.Set(L"Framestep", 91, false, false, false);
+	this->m_PauseDefault.Set(L"Pause", 282, false, false, false);
+	this->m_PlaybackDefault.Set(L"Playback", 285, false, false, false);
+	this->m_ShowConfigDefault.Set(L"ShowConfig", 289, false, false, false);
+	this->m_ShowOSDDefault.Set(L"ShowOSD", 290, false, false, false);
+
+	this->m_MoveOSDDefault.Set(L"MoveOSD", 1, false, true, false);
+	this->m_CopyCursorDefault.Set(L"CopyCursor", 257, false, true, false);
+	this->m_CopyPosDefault.Set(L"CopyPos", 258, false, true, false);
+	this->m_CopySpeedDefault.Set(L"CopySpeed", 259, false, true, false);
 
 	if(!this->m_bFileExists)
 		this->CreateDefault();
@@ -111,6 +130,11 @@ bool KeybindINIParser::GetIsCtrl(std::wstring sectionName)
 bool KeybindINIParser::GetIsAlt(std::wstring sectionName)
 {
 	return (bool)(std::stoul(this->m_INIMap[{sectionName, L"Alt"}]));
+}
+
+bool PlaybackConfigINIParser::LoadSettingOrDefaultIntoMap(PlaybackDefaultMetaInfo* pDefault)
+{
+	return true;
 }
 
 bool KeybindINIParser::LoadKeybindIntoMap(KeybindDefaultMetaInfo* pDefaults)
@@ -166,6 +190,17 @@ bool KeybindINIParser::LoadAllMappedValues()
 	return true;
 }
 
+bool PlaybackConfigINIParser::LoadAllMappedValues()
+{
+	return true;
+}
+
+bool PlaybackConfigINIParser::CreateDefaultFromMetaInfo(PlaybackDefaultMetaInfo * pDefault)
+{
+	this->WriteKeyValue(pDefault->SectionName, pDefault->KeyName, pDefault->KeyValue);
+	return true;
+}
+
 bool KeybindINIParser::CreateDefaultFromMetaInfo(KeybindDefaultMetaInfo* pDefault)
 {
 
@@ -174,6 +209,13 @@ bool KeybindINIParser::CreateDefaultFromMetaInfo(KeybindDefaultMetaInfo* pDefaul
 	this->WriteKeyValue(pDefault->SectionName, L"Ctrl", std::to_wstring(pDefault->bCtrl));
 	this->WriteKeyValue(pDefault->SectionName, L"Alt", std::to_wstring(pDefault->bAlt));
 
+	return true;
+}
+
+bool PlaybackConfigINIParser::CreateDefault()
+{
+	this->CreateDefaultFromMetaInfo(&this->m_RuntoSpeed);
+	this->CreateDefaultFromMetaInfo(&this->m_Timescale);
 	return true;
 }
 
