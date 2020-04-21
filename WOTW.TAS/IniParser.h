@@ -28,7 +28,7 @@ public:
 
 	//std::wstring ReadKeyValueString(std::wstring, std::wstring, std::wstring);
 	unsigned int ReadKeyValueUINT(std::wstring, std::wstring, unsigned int);
-	void ReadKeyValueString(std::wstring, std::wstring, std::wstring);
+	wchar_t * ReadKeyValueString(std::wstring, std::wstring, std::wstring);
 	bool WriteKeyValue(std::wstring, std::wstring, std::wstring);
 protected:
 	// SectionName, KeyName, Value
@@ -39,44 +39,11 @@ protected:
 
 	bool m_bFileExists;
 	wchar_t m_szCurrentDirectory[512];
+	wchar_t m_wzsStringBuffer[512];
 private:
 
 };
 
-typedef struct t_PlaybackDefaultMetaInfo
-{
-public:
-	std::wstring SectionName;
-	std::wstring KeyName;
-	std::wstring KeyValue;
-
-	inline void Set(std::wstring sName, std::wstring kName, std::wstring kVal)
-	{
-		this->SectionName = sName;
-		this->KeyName = kName;
-		this->KeyValue = kVal;
-	}
-
-protected:
-private:
-}PlaybackDefaultMetaInfo;
-
-class PlaybackConfigINIParser : public IniParser
-{
-public:
-	PlaybackConfigINIParser();
-
-	bool CreateDefaultFromMetaInfo(PlaybackDefaultMetaInfo*);
-	bool CreateDefault();
-
-	bool LoadSettingOrDefaultIntoMap(PlaybackDefaultMetaInfo*);
-	bool LoadAllMappedValues();
-
-	PlaybackDefaultMetaInfo m_RuntoSpeed;
-	PlaybackDefaultMetaInfo m_Timescale;
-protected:
-private:
-};
 
 typedef struct t_KeybindDefaultMetaInfo
 {

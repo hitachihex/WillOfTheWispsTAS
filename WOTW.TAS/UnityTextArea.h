@@ -44,6 +44,7 @@ public:
 
 	Rect m_Position;
 
+	// this is what we'll use to know to even bother checking GUI.changed
 	bool m_bVolatile;
 protected:
 private:

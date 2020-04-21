@@ -151,6 +151,7 @@
     <ClInclude Include="Addresses.h" />
     <ClInclude Include="ArrayWrapper.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="ButtonWithVolatileField.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="CharacterPlatformMovement.h" />
     <ClInclude Include="CharacterState.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="NullableType.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PlatformBehaviour.h" />
+    <ClInclude Include="PlaybackConfigINIParser.h" />
     <ClInclude Include="PlaybackManager.h" />
     <ClInclude Include="PlayerInputTypeDefs.h" />
     <ClInclude Include="QualitySettings.h" />
@@ -240,6 +242,7 @@
     <ClCompile Include="GUI.cpp" />
     <ClCompile Include="IniParser.cpp" />
     <ClCompile Include="InstantLoadScenesController.cpp" />
+    <ClCompile Include="PlaybackConfigINIParser.cpp" />
     <ClCompile Include="PlaybackManager.cpp" />
     <ClCompile Include="QualitySettings.cpp" />
     <ClCompile Include="RestrictAbilityController.cpp" />

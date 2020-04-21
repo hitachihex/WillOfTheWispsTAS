@@ -73,26 +73,13 @@ unsigned int IniParser::ReadKeyValueUINT(std::wstring sectionName, std::wstring 
 	return GetPrivateProfileIntW(sectionName.c_str(), keyName.c_str(), defaultValue, this->m_FileName.c_str());
 }
 
-void IniParser::ReadKeyValueString(std::wstring sectionName, std::wstring keyName, std::wstring c)
+wchar_t * IniParser::ReadKeyValueString(std::wstring sectionName, std::wstring keyName, std::wstring defaultValue)
 {
-	return;
-	//GetPrivateProfileStringW(sectionName, keyName,)
+	wmemset(&this->m_wzsStringBuffer[0], 0x0, 512);
+	GetPrivateProfileStringW(sectionName.c_str(), keyName.c_str(), defaultValue.c_str(), this->m_wzsStringBuffer, 512, this->m_FileName.c_str());
+	return this->m_wzsStringBuffer;
 }
 
-/*PlaybackConfigINIParser();
-	bool CreateDefault();
-	bool LoadAllMappedValues();*/
-
-PlaybackConfigINIParser::PlaybackConfigINIParser() : IniParser(L"PlaybackConfig.ini")
-{
-	this->m_RuntoSpeed.Set(L"PlaybackSettings", L"RuntoSpeed", L"300");
-	this->m_Timescale.Set(L"PlaybackSettings", L"Timescale", L"1.0");
-
-	if (!this->m_bFileExists)
-		this->CreateDefault();
-
-	this->LoadAllMappedValues();
-}
 // ----------
 KeybindINIParser::KeybindINIParser() : IniParser(L"Config.ini")
 {
@@ -130,11 +117,6 @@ bool KeybindINIParser::GetIsCtrl(std::wstring sectionName)
 bool KeybindINIParser::GetIsAlt(std::wstring sectionName)
 {
 	return (bool)(std::stoul(this->m_INIMap[{sectionName, L"Alt"}]));
-}
-
-bool PlaybackConfigINIParser::LoadSettingOrDefaultIntoMap(PlaybackDefaultMetaInfo* pDefault)
-{
-	return true;
 }
 
 bool KeybindINIParser::LoadKeybindIntoMap(KeybindDefaultMetaInfo* pDefaults)
@@ -190,17 +172,6 @@ bool KeybindINIParser::LoadAllMappedValues()
 	return true;
 }
 
-bool PlaybackConfigINIParser::LoadAllMappedValues()
-{
-	return true;
-}
-
-bool PlaybackConfigINIParser::CreateDefaultFromMetaInfo(PlaybackDefaultMetaInfo * pDefault)
-{
-	this->WriteKeyValue(pDefault->SectionName, pDefault->KeyName, pDefault->KeyValue);
-	return true;
-}
-
 bool KeybindINIParser::CreateDefaultFromMetaInfo(KeybindDefaultMetaInfo* pDefault)
 {
 
@@ -209,13 +180,6 @@ bool KeybindINIParser::CreateDefaultFromMetaInfo(KeybindDefaultMetaInfo* pDefaul
 	this->WriteKeyValue(pDefault->SectionName, L"Ctrl", std::to_wstring(pDefault->bCtrl));
 	this->WriteKeyValue(pDefault->SectionName, L"Alt", std::to_wstring(pDefault->bAlt));
 
-	return true;
-}
-
-bool PlaybackConfigINIParser::CreateDefault()
-{
-	this->CreateDefaultFromMetaInfo(&this->m_RuntoSpeed);
-	this->CreateDefaultFromMetaInfo(&this->m_Timescale);
 	return true;
 }
 

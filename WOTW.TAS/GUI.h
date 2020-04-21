@@ -36,6 +36,9 @@
 
 #define GAMEASSEMBLY_GUIBUTTON_RVA 0x27ED680
 
+//.data:00007FFF84BABA64 unityplayer.dll:$148BA64 #148A464
+#define UNITYPLAYER_GUIINDEXER_SDWORD_RVA 0x148BA64
+
 #pragma pack(push, 1)
 
 typedef struct t_Rect
@@ -184,6 +187,22 @@ protected:
 private:
 };
 
+class GUIStatics
+{
+public:
+	// 0x0000 - 0x0053
+	unsigned char uc_Unk0000_0053[0x54];
+
+	// 0x0054 - 0x0057
+	unsigned long m_nChangedCount;
+protected:
+private:
+};
+
+// -- just for forward decl
+extern GUIStatics * GetGUIStaticsInstance();
+// -- just for forward decl
+
 class GUI
 {
 public:
@@ -235,6 +254,8 @@ public:
 
 
 	// --- methods
+
+	static bool changed() { return GetGUIStaticsInstance()->m_nChangedCount != 0; }
 
 protected:
 private:
@@ -291,3 +312,8 @@ extern unsigned int g_nOSDFontSize;
 extern Rect * g_pPositionForWindow;
 extern String * g_pGUIString;
 extern String * g_pTextAreaString;
+
+extern signed long * g_psdwGuiIndexerPtr;
+extern bool GUI_HasAnyChanged();
+
+extern GUIStatics * GetGUIStaticsInstance();

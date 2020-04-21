@@ -89,6 +89,42 @@ void __fastcall GameController_OnGUI_Hook()
 	g_pConfigManager->UpdateButtonGUIStates();
 	g_pConfigManager->UpdateTextAreaGUIStates();
 
+	bool bRuntoSpeedPendingUpdate = g_pConfigManager->RuntoSpeedSetting->Update();
+	bool bTimescaleSettingPendingUpdate = g_pConfigManager->TimescaleSetting->Update();
+
+	if (bRuntoSpeedPendingUpdate)
+	{
+		if (g_pConfigManager->RuntoSpeedSetting->IsFieldUINT())
+		{
+			g_pConfigManager->m_pPlaybackSettingsParser->OnSettingChanged(L"PlaybackSettings", L"RuntoSpeed", g_pConfigManager->RuntoSpeedSetting->GetTextArea()->m_Text->m_wszBytes);
+
+			auto newRuntoSpeed = g_pConfigManager->m_pPlaybackSettingsParser->SettingFromMap<unsigned int>(L"PlaybackSettings", L"RuntoSpeed");
+			DebugOutput("New runtospeed set: %u", newRuntoSpeed);
+			g_pPlaybackManager->m_RuntoFramerate = newRuntoSpeed;
+		}
+		else
+		{
+			DebugOutputW(L"Hey, %s isn't an unsigned integer!", g_pConfigManager->RuntoSpeedSetting->GetTextArea()->m_Text->m_wszBytes);
+		}
+	}
+
+	if (bTimescaleSettingPendingUpdate)
+	{
+		if (g_pConfigManager->TimescaleSetting->IsFieldFloat())
+		{
+			g_pConfigManager->m_pPlaybackSettingsParser->OnSettingChanged(L"PlaybackSettings", L"Timescale", g_pConfigManager->TimescaleSetting->GetTextArea()->m_Text->m_wszBytes);
+
+			auto newRuntoTimescale = g_pConfigManager->m_pPlaybackSettingsParser->SettingFromMap<float>(L"PlaybackSettings", L"Timescale");
+			DebugOutput("New runto timescale set: %f", newRuntoTimescale);
+			g_pPlaybackManager->m_fRuntoTimescale = newRuntoTimescale;
+		}
+		else
+		{
+			DebugOutputW(L"Hey, %s isn't a float!", g_pConfigManager->TimescaleSetting->GetTextArea()->m_Text->m_wszBytes);
+		}
+
+	}
+
 	if (pCurrentEvent)
 	{
 		if (pCurrentEvent->m_pInternal)
@@ -241,6 +277,10 @@ void __fastcall GameController_Update_Hook(GameController* self)
 {
 	g_pConfigManager->UpdateButtonKeyTimers();
 	g_pConfigManager->UpdateCurrentDirtyButtonTimer();
+
+	g_pConfigManager->RuntoSpeedSetting->UpdateTimers();
+	g_pConfigManager->TimescaleSetting->UpdateTimers();
+
 	return orig_GameController_Update(self);
 }
 

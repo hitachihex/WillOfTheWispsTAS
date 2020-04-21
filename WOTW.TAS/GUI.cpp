@@ -25,7 +25,7 @@ Rect *g_pPositionForWindow = new Rect(20.0f, 20.0f, 120.0f, 50.0f);
 //.data:00007FFFD9203B78 gameassembly.dll:$43D3B78 #0
 String * g_pGUIString = new String();
 String * g_pTextAreaString = new String(0x1);
-
+signed long * g_psdwGuiIndexerPtr = nullptr;
 
 
 GUI * GetGUIInstance()
@@ -105,3 +105,20 @@ void Unity_CreateWindow(Rect* r, String * title, unsigned int id, unsigned long 
 	r = InternalDoWindowInjected(id, GetGUIUtilityInstance()->s_OriginalID, r, fnAddr, pDefaultContent, pSkin->m_pWindow, pSkin, true);
 }
 
+GUIStatics * GetGUIStaticsInstance()
+{
+	return (GUIStatics*)(*(unsigned long long*)(UnityPlayer_BaseAddr + 0 * 0x08 + 0x14D0D00));
+}
+
+bool GUI_HasAnyChanged()
+{
+	//auto i = *g_psdwGuiIndexerPtr;
+	unsigned long long rdx = UnityPlayer_BaseAddr;
+	unsigned long long offset = 0x14D0D00;
+	unsigned long long rax = *(unsigned long long*)(rdx + 0 * 0x08 + offset);
+	if (*(unsigned long*)(rax + 0x54) != 0)
+		return true;
+
+	return false;
+	//unsigned long ecx = *(unsigned long*)(rdx + *g_psdwGuiIndexerPtr +)
+}

@@ -63,6 +63,7 @@ public:
 
 		bool bClicked = GUI_Button(&this->m_Position, m_Text);
 
+
 		if (bClicked && this->m_State == EUnityButtonState::INACTIVE)
 		{
 			this->m_State = EUnityButtonState::DIRTY;
@@ -71,7 +72,16 @@ public:
 			return true;
 		}
 
+
 		return false;
+	}
+
+	inline bool UpdateGUIState2()
+	{
+		if (this->m_Text == nullptr)
+			return false;
+
+		return GUI_Button(&this->m_Position, m_Text);
 	}
 
 	inline bool UpdateTimer()

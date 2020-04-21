@@ -5,8 +5,10 @@
 #include "UnityButton.h"
 #include "UnityTextArea.h"
 #include "IniParser.h"
+#include "PlaybackConfigINIParser.h"
 #include <vector>
 #include <math.h>
+#include "ButtonWithVolatileField.h"
 
 static constexpr float g_fDefButtonHeight = 40.0f;
 static constexpr float g_fDefButtonWidth = 100.0f;
@@ -47,6 +49,9 @@ static const unsigned int COPYPOSITION_INDEX = 7;
 
 // COPYSPEED
 static const unsigned int COPYSPEED_INDEX = 8;
+
+// NOAUTOMATICUPDATE
+static const unsigned int NOAUTOMATICUPDATE_INDEX = 1000;
 
 enum UKC : unsigned short
 {
@@ -367,6 +372,12 @@ public:
 		this->FormatCurrentTextArea();
 	}
 
+	inline void CreateTextAreaVolatile(float xPos, float yPos, float width, float height)
+	{
+		this->m_pTextArea = new UnityTextArea(L"Temp", xPos, yPos, width, height, true);
+		this->FormatCurrentTextArea();
+	}
+
 	inline UnityButton * GetButton()
 	{
 		return this->m_pButton;
@@ -627,7 +638,13 @@ public:
 		unsigned short tempKeycode = 0xFFFF;
 
 		this->m_pKeybindParser = new KeybindINIParser();
+		this->m_pPlaybackSettingsParser = new PlaybackConfigINIParser();
 
+		auto runtoSpeed = this->m_pPlaybackSettingsParser->SettingFromMap<uint32_t>(L"PlaybackSettings", L"RuntoSpeed");
+		auto timescale = this->m_pPlaybackSettingsParser->SettingFromMap<float>(L"PlaybackSettings", L"Timescale");
+		//DebugOutputW(L"default runtoSpeed = %u, default timescale = %f", runtoSpeed, timescale);
+
+		//DebugOutput("HasAnyChanged=%d", []() { return GetGUIStaticsInstance()->m_nChangedCount != 0; }());
 		this->m_pCurrentDirtyButtonKey = nullptr;
 		this->m_bKeybindsMenuActive = true;
 		this->m_ppButtonKeys = new ButtonKey *[ConfigurationManager::m_NumButtonKeys];
@@ -699,6 +716,7 @@ public:
 		this->m_ppButtonKeys[COPYSPEED_INDEX]->m_bTransitiveAlt = this->m_pKeybindParser->GetIsAlt(L"CopySpeed");
 		this->m_ppButtonKeys[COPYSPEED_INDEX]->CreateTextArea(g_fDefTAXPos, g_fDefTAYPos + g_fDefTAHeight * 8.0f, g_fDefTAWidth, g_fDefTAHeight);
 
+	
 		this->Framestep = this->m_ppButtonKeys[FRAMESTEP_INDEX];
 		this->Pause = this->m_ppButtonKeys[PAUSE_INDEX];
 		this->Playback = this->m_ppButtonKeys[PLAYBACK_INDEX];
@@ -708,6 +726,11 @@ public:
 		this->CopyCursor = this->m_ppButtonKeys[COPYCURSOR_INDEX];
 		this->CopyPosition = this->m_ppButtonKeys[COPYPOSITION_INDEX];
 		this->CopySpeed = this->m_ppButtonKeys[COPYSPEED_INDEX];
+
+		this->RuntoSpeedSetting = new ButtonWithVolatileField(L"RuntoSpeed", this->m_pPlaybackSettingsParser->GetSettingValue(L"PlaybackSettings", L"RuntoSpeed").c_str(), g_fDefButtonXPos, g_fDefButtonYPos + g_fDefButtonHeight
+			* 9.0f, 110.0f, 40.0f);
+
+		this->TimescaleSetting = new ButtonWithVolatileField(L"RuntoTimescale", this->m_pPlaybackSettingsParser->GetSettingValue(L"PlaybackSettings", L"Timescale").c_str(), g_fDefButtonXPos, g_fDefButtonYPos + g_fDefButtonHeight * 10.0f, 110.0f, 40.0f);
 
 	}
 
@@ -773,6 +796,9 @@ public:
 
 			}
 		}
+		
+		//this->RuntoSpeedSetting->Update();
+		//this->TimescaleSetting->UpdateGUIState();
 
 	}
 
@@ -900,6 +926,11 @@ public:
 	ButtonKey * CopyCursor;
 	ButtonKey * CopyPosition;
 	ButtonKey * CopySpeed;
+
+	// --------------------------------
+	ButtonWithVolatileField * RuntoSpeedSetting;
+	ButtonWithVolatileField * TimescaleSetting;
+	PlaybackConfigINIParser * m_pPlaybackSettingsParser;
 protected:
 private:
 
@@ -908,6 +939,7 @@ private:
 	ButtonKey * m_pCurrentDirtyButtonKey;
 	ButtonKey ** m_ppButtonKeys;
 
+	// 9
 	static const unsigned int m_NumButtonKeys = 9;
 	
 };

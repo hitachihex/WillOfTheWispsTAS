@@ -68,6 +68,7 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 	*(unsigned long long*)(&original_il2cpp_runtime_invoke) = *(unsigned long long*)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA);
 	*(unsigned long long*)(UnityPlayer_BaseAddr + IL2CPP_RUNTIME_INVOKE_IAT_NEWPATCH_RVA) = (unsigned long long)il2cpp_runtime_invoke_Hook;
 
+	g_psdwGuiIndexerPtr = (signed long*)((UnityPlayer_BaseAddr) + UNITYPLAYER_GUIINDEXER_SDWORD_RVA);
 	g_qwUberStateControllerInstancePtr = ((Assembly_BaseAddr) + GAMEASSEMBLY_UBERSTATECONTROLLER_INSTANCE_RVA);
 	g_qwGUILayoutOptionsDefaultInstance = ((Assembly_BaseAddr)+GAMEASSEMBLY_GUILAYOUTOPTIONSINSTANCE_DEFAULT_RVA);
 	g_qwGUIInstancePtr = ((Assembly_BaseAddr)+GAMEASSEMBLY_GUIINSTANCE_RVA);
@@ -154,7 +155,17 @@ void __stdcall NativeInjectionEntryPoint(REMOTE_ENTRY_INFO* inRemoteInfo)
 
 
 	g_pPlaybackManager = new PlaybackManager("Ori.rec");
-	g_pPlaybackManager->SetFrameRate(60, true);
+	g_pPlaybackManager->SetFrameRate(60, true, 1.0f);
+
+	if (g_pConfigManager)
+	{
+		g_pPlaybackManager->m_RuntoFramerate = g_pConfigManager->m_pPlaybackSettingsParser->SettingFromMap<unsigned int>(L"PlaybackSettings", L"RuntoSpeed");
+		g_pPlaybackManager->m_fRuntoTimescale = g_pConfigManager->m_pPlaybackSettingsParser->SettingFromMap<float>(L"PlaybackSettings", L"Timescale");
+	}
+	else
+	{
+		DebugOutput("ConfigManager hasn't been instantiated before PlaybackManager, hmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm.jpg");
+	}
 	//*gp_qwUnityEngineTargetFrameRatePtr = g_pPlaybackManager->CurrentFrameRate;
 	DumpPointersForExternalOSD();
 }

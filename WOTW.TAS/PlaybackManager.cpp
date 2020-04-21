@@ -29,6 +29,9 @@ unsigned long long *gp_qwUnityEngineTargetFrameRatePtr = nullptr;
 
 PlaybackManager::PlaybackManager(const char *pcszFileName)
 {
+	this->m_RuntoFramerate = 300;
+	this->m_fRuntoTimescale = 1.0f;
+
 	this->m_CursorPos = "";
 	this->m_PlayerPos = "";
 	this->m_PlayerSpeed = "";
@@ -72,7 +75,7 @@ PlaybackManager::PlaybackManager(const char *pcszFileName)
 
 }
 
-void PlaybackManager::SetFrameRate(unsigned int newFrameRate, bool ignoreRetEarly=false)
+void PlaybackManager::SetFrameRate(unsigned int newFrameRate, bool ignoreRetEarly=false, float optionalTimescaleAdvance=1.0f)
 {
 	static constexpr float SixtyFrames = (1.0f / 60.0f);
 	//static constexpr float ThreeFrames = (1.0 / 3.0f);
@@ -82,7 +85,7 @@ void PlaybackManager::SetFrameRate(unsigned int newFrameRate, bool ignoreRetEarl
 	if (returnEarly && !ignoreRetEarly)
 		return;
 
-	UnityEngine_SetTimeScale(1.0f);
+	UnityEngine_SetTimeScale(optionalTimescaleAdvance);
 	GetPhysicsSettings()->m_CaptureFramerate = 60;
 	*gp_qwUnityEngineTargetFrameRatePtr = newFrameRate;
 	SetFixedDeltaTime(SixtyFrames);
@@ -198,6 +201,9 @@ void PlaybackManager::InitPlayback(bool bReload = true)
 	{
 		memset(&this->m_szCurrentManagerState[0], 0, 800);
 		this->m_bPlayingBack = false;
+
+		// reset framerate and timescale if we cancelled out of playback
+		this->SetFrameRate(60, true, 1.0f);
 		return;
 	}
 
@@ -400,7 +406,7 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 					if (m_pCurrentInput->IsSlow())
 						this->SetFrameRate(60);
 					else
-						this->SetFrameRate(300);
+						this->SetFrameRate(this->m_RuntoFramerate, false, this->m_fRuntoTimescale);
 				}
 				else
 				{

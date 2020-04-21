@@ -252,6 +252,12 @@
     <ClInclude Include="UberStateController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlaybackConfigINIParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonWithVolatileField.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -342,6 +348,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UberStateController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaybackConfigINIParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

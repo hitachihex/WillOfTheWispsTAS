@@ -81,7 +81,7 @@ public:
 
 	XINPUT_STATE * GetXInputState();
 
-	void SetFrameRate(unsigned int, bool);
+	void SetFrameRate(unsigned int, bool, float);
 
 	void FormatConditonally();
 
@@ -116,6 +116,9 @@ public:
 	void CopyToClipboard(std::string);
 #pragma endregion
 
+	unsigned int m_RuntoFramerate;
+
+	float m_fRuntoTimescale;
 protected:
 private:
 	const char * m_szDefaultFileName = "Ori.rec";
