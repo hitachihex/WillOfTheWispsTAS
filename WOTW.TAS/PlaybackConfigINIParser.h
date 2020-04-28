@@ -2,6 +2,7 @@
 
 #include "IniParser.h"
 #include <sstream>
+#include <functional>
 
 typedef struct t_PlaybackDefaultMetaInfo
 {
@@ -36,6 +37,28 @@ public:
 	bool WriteUpdatedSetting(std::wstring, std::wstring, std::wstring);
 
 	std::wstring GetSettingValue(std::wstring, std::wstring);
+
+	template<typename T>
+	void OnSettingChanged_Validate(std::wstring s, std::wstring k, std::wstring v, T*outPtr, const wchar_t * b, std::function<void(const wchar_t*, const wchar_t*)> failedToValidate)
+	{
+		if (!outPtr) return;
+
+		std::wstringstream wss(v);
+		T temp;
+		wss >> std::noskipws >> temp;
+
+		if (wss.eof() && !wss.fail())
+		{
+			this->UpdateSettingIntoMap(s, k, v);
+			this->WriteUpdatedSetting(s, k, v);
+			*outPtr = temp;
+		}
+		else
+		{
+			failedToValidate(v.c_str(), b);
+		}
+	}
+
 	void OnSettingChanged(std::wstring, std::wstring, std::wstring);
 
 	template<typename T>

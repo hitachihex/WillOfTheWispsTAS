@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PlaybackManager.h"
+#include "UI_Cameras.h"
 
 
 // This is set in NativeInjectionEntryPoint, we need access to it because DoPlayback formats the playback state string.
@@ -81,6 +82,21 @@ void PlaybackManager::SetFrameRate(unsigned int newFrameRate, bool ignoreRetEarl
 	//static constexpr float ThreeFrames = (1.0 / 3.0f);
 	bool returnEarly = (this->CurrentFrameRate == newFrameRate);
 	this->CurrentFrameRate = newFrameRate;
+
+	/* Interesting..
+	   IL2CPP drops this pointer when the object is set to disabled?
+	auto pCurrentGameplayCamera = GetCameras()->m_pCurrent;
+
+	if (newFrameRate == 60)
+	{
+		if (pCurrentGameplayCamera)
+			pCurrentGameplayCamera->m_pCachedPtr->SetEnabled(true);
+	}
+	else if (newFrameRate > 60)
+	{
+		if (pCurrentGameplayCamera)
+			pCurrentGameplayCamera->m_pCachedPtr->SetEnabled(false);
+	}*/
 
 	if (returnEarly && !ignoreRetEarly)
 		return;
@@ -404,9 +420,13 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 				{
 					// change SetFrameRate to higher if you can handle the playback speed
 					if (m_pCurrentInput->IsSlow())
+					{
 						this->SetFrameRate(60);
+					}
 					else
+					{
 						this->SetFrameRate(this->m_RuntoFramerate, false, this->m_fRuntoTimescale);
+					}
 				}
 				else
 				{

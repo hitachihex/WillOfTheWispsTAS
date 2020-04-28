@@ -623,19 +623,19 @@ public:
 					bWasValidToken = true;
 					continue;
 				}
-				else if (token == "Option1" || token == "Choose1")
+				else if (token == "OPTION1" || token == "CHOOSE1")
 				{
 					TempState |= EInputState::OPTION1;
 					bWasValidToken = true;
 					continue;
 				}
-				else if (token == "Option2" || token == "Choose2")
+				else if (token == "OPTION2" || token == "CHOOSE2")
 				{
 					TempState |= EInputState::OPTION2;
 					bWasValidToken = true;
 					continue;
 				}
-				else if (token == "Option3" || token == "Choose3")
+				else if (token == "OPTION3" || token == "CHOOSE3")
 				{
 					TempState |= EInputState::OPTION3;
 					bWasValidToken = true;

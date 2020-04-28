@@ -141,6 +141,9 @@ public:
 	// vtable[0x1A]
 	virtual bool IsEnabled() = 0;
 
+	// vtable[0x1B]
+	virtual void SetEnabled(bool) = 0;
+
 
 	// ------------------------------------
 	// ------------------------------------

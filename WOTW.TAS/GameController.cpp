@@ -92,6 +92,7 @@ void __fastcall GameController_OnGUI_Hook()
 	bool bRuntoSpeedPendingUpdate = g_pConfigManager->RuntoSpeedSetting->Update();
 	bool bTimescaleSettingPendingUpdate = g_pConfigManager->TimescaleSetting->Update();
 
+	/*
 	if (bRuntoSpeedPendingUpdate)
 	{
 		if (g_pConfigManager->RuntoSpeedSetting->IsFieldUINT())
@@ -106,23 +107,19 @@ void __fastcall GameController_OnGUI_Hook()
 		{
 			DebugOutputW(L"Hey, %s isn't an unsigned integer!", g_pConfigManager->RuntoSpeedSetting->GetTextArea()->m_Text->m_wszBytes);
 		}
+	}*/
+
+	auto validationFailed = [](const wchar_t *a, const wchar_t * b) { DebugOutputW(L"Hey, %s isn't a %s!", a, b); };
+	if (bRuntoSpeedPendingUpdate)
+	{
+		g_pConfigManager->m_pPlaybackSettingsParser->OnSettingChanged_Validate<unsigned int>(L"PlaybackSettings", L"RuntoSpeed", 
+			g_pConfigManager->RuntoSpeedSetting->GetTextArea()->m_Text->m_wszBytes, &g_pPlaybackManager->m_RuntoFramerate, L"unsigned int", validationFailed);
 	}
 
 	if (bTimescaleSettingPendingUpdate)
 	{
-		if (g_pConfigManager->TimescaleSetting->IsFieldFloat())
-		{
-			g_pConfigManager->m_pPlaybackSettingsParser->OnSettingChanged(L"PlaybackSettings", L"Timescale", g_pConfigManager->TimescaleSetting->GetTextArea()->m_Text->m_wszBytes);
-
-			auto newRuntoTimescale = g_pConfigManager->m_pPlaybackSettingsParser->SettingFromMap<float>(L"PlaybackSettings", L"Timescale");
-			DebugOutput("New runto timescale set: %f", newRuntoTimescale);
-			g_pPlaybackManager->m_fRuntoTimescale = newRuntoTimescale;
-		}
-		else
-		{
-			DebugOutputW(L"Hey, %s isn't a float!", g_pConfigManager->TimescaleSetting->GetTextArea()->m_Text->m_wszBytes);
-		}
-
+		g_pConfigManager->m_pPlaybackSettingsParser->OnSettingChanged_Validate<float>(L"PlaybackSettings", L"Timescale",
+			g_pConfigManager->TimescaleSetting->GetTextArea()->m_Text->m_wszBytes, &g_pPlaybackManager->m_fRuntoTimescale, L"float", validationFailed);
 	}
 
 	if (pCurrentEvent)
