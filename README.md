@@ -86,7 +86,7 @@ Accepted commands are: <br />
     Ability1 <br />
     Ability2 <br />
     Ability3 <br />
-    Cancel <br />
+    Cancel or DlgExit  <br />
     Select <br />
 	Talk or AdvanceDialogue or Dialogue - Advances dialogue boxes <br />
 	Option1 or Choose1 - chooses dialogue option 1 <br />

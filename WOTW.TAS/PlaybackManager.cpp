@@ -513,6 +513,8 @@ void PlaybackManager::DoPlayback(bool wasFramestepped, Vector2 * cursorPosFromFi
 		pCmd->DialogueOption2->Update(m_pCurrentInput->IsOption2());
 		pCmd->DialogueOption3->Update(m_pCurrentInput->IsOption3());
 
+		pCmd->DialogueExit->Update(m_pCurrentInput->IsCancelOrDialogueExit());
+
 		pCmd->MenuClose->Update(m_pCurrentInput->IsUnpause());
 		pCmd->Ability1->Update(m_pCurrentInput->IsAbilityOne());
 		pCmd->Ability2->Update(m_pCurrentInput->IsAbilityTwo());

@@ -91,7 +91,9 @@ enum EInputState
 
 	OPTION3              = 1 << 26,
 
-	IINTERACT            = 1 << 27
+	IINTERACT            = 1 << 27,
+
+	ES_CANCEL            = 1 << 28
 
 };
 
@@ -225,6 +227,9 @@ public:
 
 		if (this->IsInteract())
 			result += ",Interact";
+
+		if (this->IsCancelOrDialogueExit())
+			result += ",CancelOrDlgExit";
 
 		return result;
 	}
@@ -420,6 +425,11 @@ public:
 	bool IsOption3()
 	{
 		return this->HasFlag(this->m_InputState, EInputState::OPTION3);
+	}
+
+	bool IsCancelOrDialogueExit()
+	{
+		return this->HasFlag(this->m_InputState, EInputState::ES_CANCEL);
 	}
 
 	bool IsMenuLeft()
@@ -724,7 +734,7 @@ public:
 					bWasValidToken = true;
 					continue;
 				}
-				else if (token == "CANCEL" || token == "ABILITY3" || token == "BUTTONB")
+				else if (token == "ABILITY3" || token == "BUTTONB")
 				{
 					// this cancels
 					this->Ability3 = true;
@@ -732,6 +742,13 @@ public:
 					bWasValidToken = true;
 					continue;
 				}
+
+				else if(token == "CANCEL" || token == "DLGEXIT")
+				{
+				    TempState |= EInputState::ES_CANCEL;
+					bWasValidToken = true;
+					continue;
+                }
 
 				else if (token == "ANGLE")
 				{
